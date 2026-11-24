@@ -1,0 +1,52 @@
+{
+  "symbols": [
+    {
+      "name": "__ZN5FNameC1EPKc",
+      "address": 4304838380,
+      "section": 1,
+      "file": "100969eec.bin",
+      "size": 68
+    },
+    {
+      "name": "__ZNK6AActor19GetComponentByClassE11TSubclassOfI15UActorComponentE",
+      "address": 4343538896,
+      "section": 1,
+      "file": "102e524d0.bin",
+      "size": 96
+    },
+    {
+      "name": "__ZNK15USceneComponent17GetSocketLocationE5FName",
+      "address": 4348376684,
+      "section": 1,
+      "file": "1032ef66c.bin",
+      "size": 56
+    },
+    {
+      "name": "__ZNK21USkinnedMeshComponent15DoesSocketExistE5FName",
+      "address": 4348611316,
+      "section": 1,
+      "file": "103328af4.bin",
+      "size": 28
+    },
+    {
+      "name": "__ZN11AController18SetControlRotationERKN2UE4Math8TRotatorIdEE",
+      "address": 4349024368,
+      "section": 1,
+      "file": "10338d870.bin",
+      "size": 548
+    },
+    {
+      "name": "__ZNK11AController13LineOfSightToEPK6AActorN2UE4Math7TVectorIdEEb",
+      "address": 4349025552,
+      "section": 1,
+      "file": "10338dd10.bin",
+      "size": 960
+    },
+    {
+      "address": 4344326232,
+      "name": "USkeletalMeshComponent::StaticClass (bounded prefix)",
+      "size": 128,
+      "file": "102f12858.bin"
+    }
+  ]
+}

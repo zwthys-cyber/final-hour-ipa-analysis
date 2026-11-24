@@ -15,6 +15,7 @@ jobs:
       - run: python -m pip install --only-binary=":all:" capstone==5.0.3
       - run: python tools/disassemble.py
       - run: python tools/disassemble.py evidence/minimap
+      - run: python tools/disassemble.py evidence/aimlock
       - uses: actions/upload-artifact@v4
         with:
           name: native-disassembly
