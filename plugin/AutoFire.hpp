@@ -19,8 +19,9 @@ static void updateFire(uintptr_t desired) {
 }
 struct FireFrame {
     uintptr_t component=0;bool gateEvaluated=false;
+    aim::Part part=aim::Part::Off;
     ~FireFrame() {
         if(!gateEvaluated) fireGate.update(false,0,0);
-        updateFire(fireEnabled.load(std::memory_order_relaxed)?component:0);
+        updateFire(fireEnabled.load(std::memory_order_relaxed) && aimPart.load(std::memory_order_relaxed)==part?component:0);
     }
 };

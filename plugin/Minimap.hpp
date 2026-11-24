@@ -2,6 +2,7 @@
 #include <atomic>
 #include "RadarStamp.hpp"
 #include "HeadMath.hpp"
+#include "AimMode.hpp"
 #include "FirePolicy.hpp"
 #include <cmath>
 #include <cstdint>
@@ -18,6 +19,7 @@ static_assert(sizeof(Bodies)==144);
 static uintptr_t base=0;
 static uintptr_t shadow[256]{};
 static std::atomic<bool> enabled{false};
+static std::atomic<aim::Part> aimPart{aim::Part::Off};
 static thread_local bool drawing=false;
 
 template<class T> static bool read(uintptr_t address,T &value) {
@@ -34,7 +36,7 @@ static void draw(uintptr_t hud) {
     auto original=function<void(*)(uintptr_t)>(0x07a82154);
     if(drawing) { original(hud);return; }
     hudFrames.fetch_add(1,std::memory_order_relaxed);
-    if(!enabled.load() && !headEnabled.load() && !fireOwned.load() && !zoomOut.load()) { original(hud);return; }
+    if(!enabled.load() && aimPart.load()==aim::Part::Off && !fireOwned.load() && !zoomOut.load()) { original(hud);return; }
     drawing=true;
     // Executed by the game's virtual DrawHUD call, on the game's own drawing thread.
     uintptr_t world=function<uintptr_t(*)(uintptr_t)>(0x02e43cb0)(hud);
@@ -43,7 +45,7 @@ static void draw(uintptr_t hud) {
         nativeDraw(hud);fireGate.update(false,0,0);updateFire(0);drawing=false;return;
     }
     if(!enabled.load(std::memory_order_relaxed)) {
-        nativeDraw(hud);lockHead(world);drawing=false;return;
+        nativeDraw(hud);lockAim(world);drawing=false;return;
     }
     Bodies bodies;
     function<void(*)(uintptr_t,Bodies *)>(0x07442a7c)(world,&bodies);
@@ -74,7 +76,7 @@ static void draw(uintptr_t hud) {
         restoreStamp(reinterpret_cast<uint64_t *>(saved[i].address),stamp,saved[i].before);
     }
     if(bodies.heap) function<void(*)(uintptr_t)>(0x0067d710)(bodies.heap);
-    lockHead(world);drawing=false;
+    lockAim(world);drawing=false;
 }
 
 static bool attach() {

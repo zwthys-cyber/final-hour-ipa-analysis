@@ -71,6 +71,7 @@ static uintptr_t LocateSettings() {
 @property(nonatomic) CGPoint bubblePosition;
 @property(nonatomic,strong) UIButton *button;
 @property(nonatomic,strong) UIButton *headButton;
+@property(nonatomic,strong) UIButton *bodyButton;
 @property(nonatomic,strong) UIButton *fireButton;
 @property(nonatomic,strong) UIButton *zoomButton;
 @property(nonatomic,strong) UILabel *report;
@@ -81,44 +82,51 @@ static uintptr_t LocateSettings() {
 @end
 @implementation FHRadarController
 - (void)refresh {
-    BOOL on=radar::enabled.load(),head=radar::headEnabled.load();
-    BOOL attached=(on || head || radar::zoomOut.load() || radar::fireOwned.load()) && radar::attach();
+    BOOL on=radar::enabled.load();
+    aim::Part part=radar::aimPart.load();
+    BOOL head=part==aim::Part::Head,body=part==aim::Part::Body;
+    BOOL attached=(on || head || body || radar::zoomOut.load() || radar::fireOwned.load()) && radar::attach();
     [self.button setTitle:on?(attached?@"地图敌人：开":@"地图：等待对局"):@"地图敌人：关" forState:UIControlStateNormal];
     [self.headButton setTitle:head?(attached?@"锁头：搜敌中":@"锁头：等待对局"):@"锁头：关" forState:UIControlStateNormal];
+    [self.bodyButton setTitle:body?(attached?@"锁身体：搜敌中":@"锁身体：等待对局"):@"锁身体：关" forState:UIControlStateNormal];
     [self.zoomButton setTitle:radar::zoomOut.load()?@"地图比例：缩小 2 倍":@"地图比例：原始" forState:UIControlStateNormal];
     [self.fireButton setTitle:radar::fireEnabled.load()?(radar::fireOwned.load()?@"自动开火：输入中":@"自动开火：等待对准"):@"自动开火：关" forState:UIControlStateNormal];
     uint64_t frames=radar::hudFrames.load();
     NSTimeInterval now=NSDate.timeIntervalSinceReferenceDate;
     if(frames!=self.lastFrames) self.lastHeartbeatTime=now;
     self.lastFrames=frames;
-    NSString *states[] = {@"锁头未启用",@"正在检查角色",@"未获取到本地角色",@"未获取到有效镜头",@"本地角色未存活",@"骨骼类型初始化失败",@"没有存活敌人",@"敌人网格缺少 head 骨骼",@"目标超出角度或距离",@"目标未通过视线检查",@"已写入头部瞄准视角",@"视角写入核对失败",@"本地角色缺少开火组件"};
+    NSString *states[] = {@"瞄准未启用",@"正在检查角色",@"未获取到本地角色",@"未获取到有效镜头",@"本地角色未存活",@"骨骼类型初始化失败",@"没有存活敌人",@"网格缺少所选部位骨骼",@"目标超出角度或距离",@"目标未通过视线检查",@"已写入瞄准视角",@"视角写入核对失败",@"本地角色缺少开火组件"};
     unsigned state=radar::headState.load();
     NSString *reason=state<13?states[state]:@"等待检查";
     if(state==10) reason=[NSString stringWithFormat:@"控制旋转已写 · 镜头差 %u°",radar::cameraErrorDegrees.load()];
+    if(radar::reportedPart.load()!=part) reason=@"正在切换瞄准部位";
     if(!attached) reason=@"等待进入支持的对局";
     else if(!frames || now-self.lastHeartbeatTime>=2) reason=@"HUD 回调未运行或已暂停";
-    self.report.text=[NSString stringWithFormat:@"FH 0.4 · %@\n回调 %llu · 敌 %u · 头 %u · 范围 %u · 可见 %u · 写视角 %llu",reason,
+    self.report.text=[NSString stringWithFormat:@"FH 0.5 · %@\n回调 %llu · 敌 %u · 骨骼 %u · 范围 %u · 可见 %u · 写视角 %llu",reason,
         (unsigned long long)frames,radar::enemyCount.load(),radar::boneCount.load(),radar::angleCount.load(),
         radar::visibleCount.load(),(unsigned long long)radar::viewWrites.load()];
 }
 - (void)toggle { radar::enabled.store(!radar::enabled.load());[self refresh]; }
-- (void)toggleHead {
-    BOOL on=!radar::headEnabled.load();radar::headEnabled.store(on);
-    if(!on) radar::fireEnabled.store(false);
+- (void)togglePart:(aim::Part)requested {
+    aim::Part next=aim::toggle(radar::aimPart.load(),requested);
+    radar::aimPart.store(next);
+    if(next==aim::Part::Off) radar::fireEnabled.store(false);
     [self refresh];
 }
+- (void)toggleHead { [self togglePart:aim::Part::Head]; }
+- (void)toggleBody { [self togglePart:aim::Part::Body]; }
 - (void)toggleFire {
     BOOL on=!radar::fireEnabled.load();
-    if(on) radar::headEnabled.store(true);
+    if(on) radar::aimPart.store(aim::forAutoFire(radar::aimPart.load()));
     radar::fireEnabled.store(on);[self refresh];
 }
 - (void)toggleZoom { radar::zoomOut.store(!radar::zoomOut.load());[self refresh]; }
 - (void)copyReport {
-    UIPasteboard.generalPasteboard.string=[NSString stringWithFormat:@"%@\n地图 %d / 锁头 %d / 缩图 %d / 自动火 %d",self.report.text,
-        radar::enabled.load(),radar::headEnabled.load(),radar::zoomOut.load(),radar::fireEnabled.load()];
+    UIPasteboard.generalPasteboard.string=[NSString stringWithFormat:@"%@\n地图 %d / 部位 %@ / 缩图 %d / 自动火 %d",self.report.text,
+        radar::enabled.load(),radar::aimPart.load()==aim::Part::Body?@"身体":(radar::aimPart.load()==aim::Part::Head?@"头部":@"关闭"),radar::zoomOut.load(),radar::fireEnabled.load()];
     self.report.text=@"运行状态已复制，可粘贴反馈";
 }
-- (void)suspend { radar::fireEnabled.store(false);radar::headEnabled.store(false); }
+- (void)suspend { radar::fireEnabled.store(false);radar::aimPart.store(aim::Part::Off); }
 - (CGRect)overlayArea {
     UIView *root=self.window.rootViewController.view;
     CGRect safe=UIEdgeInsetsInsetRect(root.bounds,root.safeAreaInsets);
@@ -184,9 +192,10 @@ static uintptr_t LocateSettings() {
     [self.panel addSubview:scroll];
     self.button=[self makeButton:@selector(toggle) label:@"小地图敌人持续显示" root:scroll];
     self.headButton=[self makeButton:@selector(toggleHead) label:@"头部瞄准" root:scroll];
+    self.bodyButton=[self makeButton:@selector(toggleBody) label:@"身体瞄准，与锁头互斥" root:scroll];
     self.zoomButton=[self makeButton:@selector(toggleZoom) label:@"缩小地图内容比例" root:scroll];
     self.fireButton=[self makeButton:@selector(toggleFire) label:@"对准后自动开火" root:scroll];
-    UILabel *title=[UILabel new];title.text=@"FH 0.4";title.textColor=UIColor.whiteColor;
+    UILabel *title=[UILabel new];title.text=@"FH 0.5";title.textColor=UIColor.whiteColor;
     title.font=[UIFont systemFontOfSize:13 weight:UIFontWeightSemibold];
     UIButton *close=[UIButton buttonWithType:UIButtonTypeSystem];[close setTitle:@"收起" forState:UIControlStateNormal];
     [close addTarget:self action:@selector(togglePanel) forControlEvents:UIControlEventTouchUpInside];
@@ -196,7 +205,9 @@ static uintptr_t LocateSettings() {
     self.report.textColor=UIColor.lightGrayColor;self.report.font=[UIFont systemFontOfSize:11];self.report.numberOfLines=0;
     self.report.userInteractionEnabled=YES;self.report.accessibilityLabel=@"运行状态，轻点复制诊断";
     [self.report addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(copyReport)]];
-    UIStackView *stack=[[UIStackView alloc] initWithArrangedSubviews:@[header,self.button,self.headButton,self.zoomButton,self.fireButton,self.report]];
+    UIStackView *parts=[[UIStackView alloc] initWithArrangedSubviews:@[self.headButton,self.bodyButton]];
+    parts.axis=UILayoutConstraintAxisHorizontal;parts.spacing=7;parts.distribution=UIStackViewDistributionFillEqually;
+    UIStackView *stack=[[UIStackView alloc] initWithArrangedSubviews:@[header,self.button,parts,self.zoomButton,self.fireButton,self.report]];
     stack.axis=UILayoutConstraintAxisVertical;stack.spacing=7;stack.translatesAutoresizingMaskIntoConstraints=NO;
     [scroll addSubview:stack];
     [NSLayoutConstraint activateConstraints:@[
@@ -227,11 +238,11 @@ static uintptr_t LocateSettings() {
     __weak FHRadarController *weakSelf=self;
     root.onLayout=^{ [weakSelf layoutOverlay]; };
     [self layoutOverlay];
-    for(UIButton *b in @[self.button,self.headButton,self.zoomButton,self.fireButton]) {
+    for(UIButton *b in @[self.button,self.headButton,self.bodyButton,self.zoomButton,self.fireButton]) {
         b.enabled=supported;
         if(!supported) [b setTitle:@"版本不支持" forState:UIControlStateNormal];
     }
-    if(supported) [self refresh];else self.report.text=@"FH 0.4 · 游戏版本不支持，未启用";
+    if(supported) [self refresh];else self.report.text=@"FH 0.5 · 游戏版本不支持，未启用";
     self.window.hidden=NO;
     if(supported) {
         self.timer=[NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(refresh) userInfo:nil repeats:YES];
