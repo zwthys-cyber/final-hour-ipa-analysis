@@ -1,7 +1,7 @@
 // Included inside namespace radar, after the verified native read/function helpers.
 static std::atomic<aim::Part> reportedPart{aim::Part::Off};
 static std::atomic<unsigned> headState{0},enemyCount{0},boneCount{0},angleCount{0},visibleCount{0};
-static std::atomic<unsigned> cameraErrorDegrees{0};
+static std::atomic<unsigned> cameraErrorMilliDegrees{0};
 static std::atomic<uint64_t> hudFrames{0},viewWrites{0};
 struct Components {
     uintptr_t data=0;int32_t count=0,capacity=0;
@@ -14,7 +14,7 @@ static void lockAim(uintptr_t world) {
     fire.part=part;reportedPart.store(part);
     static aim::Part lastPart=aim::Part::Off;
     if(part!=lastPart) {
-        fireGate.update(false,0,0);updateFire(0);lastPart=part;
+        fireGate.update(false,0,0);lastPart=part;
     }
     if(part==aim::Part::Off) {
         fireGate.update(false,0,0);headState.store(0);return;
@@ -41,7 +41,7 @@ static void lockAim(uintptr_t world) {
     Bodies bodies;
     function<void(*)(uintptr_t,Bodies *)>(0x07442a7c)(world,&bodies);
     uintptr_t data=bodies.heap?bodies.heap:reinterpret_cast<uintptr_t>(bodies.local);
-    Rotation best{};double bestError=61;uintptr_t targetActor=0;
+    Rotation best{};Vector bestPoint{};double bestError=61;uintptr_t targetActor=0;
     unsigned enemies=0,bones=0,angles=0,visible=0;
     if(bodies.count>=0 && bodies.count<=512 && bodies.capacity>=bodies.count &&
        Readable(data,static_cast<size_t>(bodies.count)*sizeof(uintptr_t),false)) {
@@ -73,7 +73,7 @@ static void lockAim(uintptr_t world) {
                 ++angles;
                 if(!function<bool(*)(uintptr_t,uintptr_t,Vector,bool)>(0x0338dd10)(pc,actor,eye,false)) continue;
                 ++visible;
-                if(error<bestError) { best=candidate;bestError=error;targetActor=actor; }
+                if(error<bestError) { best=candidate;bestPoint=point;bestError=error;targetActor=actor; }
             }
         }
     }
@@ -82,6 +82,8 @@ static void lockAim(uintptr_t world) {
     headState.store(!enemies?6:(!bones?7:(!angles?8:(!targetActor?9:10))));
     // Do not apply a candidate selected for a mode the user has just changed.
     if(aimPart.load(std::memory_order_relaxed)!=part) return;
+    cameraErrorMilliDegrees.store(targetActor?static_cast<unsigned>(std::round(bestError*1000)):0);
+    if(overlayOpen.load()) { headState.store(13);return; }
     if(targetActor) {
         function<void(*)(uintptr_t,const Rotation *)>(0x0338d870)(pc,&best);
         Rotation after{};
@@ -89,11 +91,15 @@ static void lockAim(uintptr_t world) {
            std::abs(headmath::wrap(after.yaw-best.yaw))<.01) viewWrites.fetch_add(1);
         else { headState.store(11);fireGate.update(false,0,0);return; }
     }
-    cameraErrorDegrees.store(targetActor?static_cast<unsigned>(std::ceil(bestError)):0);
     uint64_t key=0;
     if(targetActor) function<void(*)(uint64_t *,const uintptr_t *)>(0x0108881c)(&key,&targetActor);
+    double tolerance=firegeometry::tolerance(eye,bestPoint,part);
+    bool requested=fireEnabled.load() && aimPart.load()==part && !overlayOpen.load();
+    bool exact=requested && targetActor && bestError<=tolerance &&
+        traceShot(world,pawn,targetActor,eye,view,bestPoint,part);
+    fire.now=std::chrono::duration<double>(std::chrono::steady_clock::now().time_since_epoch()).count();
     fire.gateEvaluated=true;
-    bool ready=fireGate.update(fireEnabled.load() && aimPart.load()==part,key,bestError,static_cast<uint32_t>(part));
+    bool ready=fireGate.update(requested,key,bestError,static_cast<uint32_t>(part),fire.now,tolerance,exact);
     if(ready) {
         uintptr_t combatClass=function<uintptr_t(*)(int)>(0x07357440)(0);
         if(combatClass) fire.component=function<uintptr_t(*)(uintptr_t,const uintptr_t *)>(0x02e524d0)(pawn,&combatClass);

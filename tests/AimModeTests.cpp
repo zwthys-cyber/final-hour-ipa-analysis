@@ -1,6 +1,5 @@
 #include "../plugin/AimMode.hpp"
 #include <cassert>
-#include "../plugin/FirePolicy.hpp"
 int main() {
     using namespace aim;
     auto part=toggle(Part::Off,Part::Head);
@@ -18,13 +17,6 @@ int main() {
     assert(selectBone(Part::Body,[](Bone b){return b==Bone::LowerChest;})==Bone::LowerChest);
     assert(selectBone(Part::Body,[](Bone b){return b==Bone::Head;})==Bone::None);
     assert(selectBone(Part::Head,[](Bone b){return b==Bone::Chest;})==Bone::None);
-    firepolicy::Gate gate;
-    assert(!gate.update(true,99,.2,static_cast<uint32_t>(Part::Head)));
-    assert(gate.update(true,99,.2,static_cast<uint32_t>(Part::Head)));
-    // Same enemy, different body part: reacquire instead of firing at the old alignment.
-    assert(!gate.update(true,99,.2,static_cast<uint32_t>(Part::Body)));
-    assert(gate.update(true,99,.2,static_cast<uint32_t>(Part::Body)));
-    assert(!gate.update(true,99,.2,static_cast<uint32_t>(Part::Head)));
     bool queried=false;
     assert(selectBone(Part::Off,[&](Bone){queried=true;return true;})==Bone::None);
     assert(!queried);

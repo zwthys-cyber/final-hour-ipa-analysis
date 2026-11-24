@@ -4,6 +4,8 @@
 #include "HeadMath.hpp"
 #include "AimMode.hpp"
 #include "FirePolicy.hpp"
+#include "FireGeometry.hpp"
+#include <chrono>
 #include <cmath>
 #include <cstdint>
 #include <cstring>
@@ -20,6 +22,7 @@ static uintptr_t base=0;
 static uintptr_t shadow[256]{};
 static std::atomic<bool> enabled{false};
 static std::atomic<aim::Part> aimPart{aim::Part::Off};
+static std::atomic<bool> overlayOpen{false};
 static thread_local bool drawing=false;
 
 template<class T> static bool read(uintptr_t address,T &value) {
@@ -28,6 +31,7 @@ template<class T> static bool read(uintptr_t address,T &value) {
 }
 template<class T> static T function(uintptr_t offset) { return reinterpret_cast<T>(base+offset); }
 
+#include "ShotTrace.hpp"
 #include "AutoFire.hpp"
 #include "HeadAim.hpp"
 #include "MapZoom.hpp"
@@ -36,13 +40,13 @@ static void draw(uintptr_t hud) {
     auto original=function<void(*)(uintptr_t)>(0x07a82154);
     if(drawing) { original(hud);return; }
     hudFrames.fetch_add(1,std::memory_order_relaxed);
-    if(!enabled.load() && aimPart.load()==aim::Part::Off && !fireOwned.load() && !zoomOut.load()) { original(hud);return; }
+    if(!enabled.load() && aimPart.load()==aim::Part::Off && !zoomOut.load()) { original(hud);return; }
     drawing=true;
     // Executed by the game's virtual DrawHUD call, on the game's own drawing thread.
     uintptr_t world=function<uintptr_t(*)(uintptr_t)>(0x02e43cb0)(hud);
     double now=0;
     if(!read(world+0x9d0,now) || !std::isfinite(now) || now<0) {
-        nativeDraw(hud);fireGate.update(false,0,0);updateFire(0);drawing=false;return;
+        nativeDraw(hud);fireGate.update(false,0,0);drawing=false;return;
     }
     if(!enabled.load(std::memory_order_relaxed)) {
         nativeDraw(hud);lockAim(world);drawing=false;return;

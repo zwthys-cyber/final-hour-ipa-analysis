@@ -85,26 +85,29 @@ static uintptr_t LocateSettings() {
     BOOL on=radar::enabled.load();
     aim::Part part=radar::aimPart.load();
     BOOL head=part==aim::Part::Head,body=part==aim::Part::Body;
-    BOOL attached=(on || head || body || radar::zoomOut.load() || radar::fireOwned.load()) && radar::attach();
+    BOOL attached=(on || head || body || radar::zoomOut.load()) && radar::attach();
     [self.button setTitle:on?(attached?@"地图敌人：开":@"地图：等待对局"):@"地图敌人：关" forState:UIControlStateNormal];
     [self.headButton setTitle:head?(attached?@"锁头：搜敌中":@"锁头：等待对局"):@"锁头：关" forState:UIControlStateNormal];
     [self.bodyButton setTitle:body?(attached?@"锁身体：搜敌中":@"锁身体：等待对局"):@"锁身体：关" forState:UIControlStateNormal];
     [self.zoomButton setTitle:radar::zoomOut.load()?@"地图比例：缩小 2 倍":@"地图比例：原始" forState:UIControlStateNormal];
-    [self.fireButton setTitle:radar::fireEnabled.load()?(radar::fireOwned.load()?@"自动开火：输入中":@"自动开火：等待对准"):@"自动开火：关" forState:UIControlStateNormal];
+    NSString *fireTitle=radar::fireEnabled.load()?(radar::overlayOpen.load()?@"自动开火：面板内暂停":@"自动开火：严格点射"):@"自动开火：关";
+    [self.fireButton setTitle:fireTitle forState:UIControlStateNormal];
     uint64_t frames=radar::hudFrames.load();
     NSTimeInterval now=NSDate.timeIntervalSinceReferenceDate;
     if(frames!=self.lastFrames) self.lastHeartbeatTime=now;
     self.lastFrames=frames;
-    NSString *states[] = {@"瞄准未启用",@"正在检查角色",@"未获取到本地角色",@"未获取到有效镜头",@"本地角色未存活",@"骨骼类型初始化失败",@"没有存活敌人",@"网格缺少所选部位骨骼",@"目标超出角度或距离",@"目标未通过视线检查",@"已写入瞄准视角",@"视角写入核对失败",@"本地角色缺少开火组件"};
+    NSString *states[] = {@"瞄准未启用",@"正在检查角色",@"未获取到本地角色",@"未获取到有效镜头",@"本地角色未存活",@"骨骼类型初始化失败",@"没有存活敌人",@"网格缺少所选部位骨骼",@"目标超出角度或距离",@"目标未通过视线检查",@"已写入瞄准视角",@"视角写入核对失败",@"本地角色缺少开火组件",@"面板内暂停瞄准与点射"};
     unsigned state=radar::headState.load();
-    NSString *reason=state<13?states[state]:@"等待检查";
-    if(state==10) reason=[NSString stringWithFormat:@"控制旋转已写 · 镜头差 %u°",radar::cameraErrorDegrees.load()];
+    NSString *reason=state<14?states[state]:@"等待检查";
+    if(state==10) reason=[NSString stringWithFormat:@"控制旋转已写 · 镜头差 %.2f°",radar::cameraErrorMilliDegrees.load()/1000.0];
     if(radar::reportedPart.load()!=part) reason=@"正在切换瞄准部位";
     if(!attached) reason=@"等待进入支持的对局";
     else if(!frames || now-self.lastHeartbeatTime>=2) reason=@"HUD 回调未运行或已暂停";
-    self.report.text=[NSString stringWithFormat:@"FH 0.5 · %@\n回调 %llu · 敌 %u · 骨骼 %u · 范围 %u · 可见 %u · 写视角 %llu",reason,
+    NSString *rays[]={@"未检查",@"命中所选部位",@"未命中或起点重叠",@"遮挡或命中其他对象",@"命中点偏离所选部位",@"查询不可用"};
+    unsigned ray=static_cast<unsigned>(radar::lastRay.load());
+    self.report.text=[NSString stringWithFormat:@"FH 0.6 · %@\n回调 %llu · 敌 %u · 骨骼 %u · 范围 %u · 可见 %u · 写视角 %llu\n上次射线：%@ · 点射请求 %llu",reason,
         (unsigned long long)frames,radar::enemyCount.load(),radar::boneCount.load(),radar::angleCount.load(),
-        radar::visibleCount.load(),(unsigned long long)radar::viewWrites.load()];
+        radar::visibleCount.load(),(unsigned long long)radar::viewWrites.load(),ray<6?rays[ray]:@"未知",(unsigned long long)radar::shotRequests.load()];
 }
 - (void)toggle { radar::enabled.store(!radar::enabled.load());[self refresh]; }
 - (void)togglePart:(aim::Part)requested {
@@ -147,6 +150,8 @@ static uintptr_t LocateSettings() {
 }
 - (void)togglePanel {
     self.panel.hidden=!self.panel.hidden;
+    radar::overlayOpen.store(!self.panel.hidden);
+    [self refresh];
     self.bubble.alpha=self.panel.hidden?.55:.9;
     self.bubble.accessibilityLabel=self.panel.hidden?@"展开 FH 设置，可拖动":@"收起 FH 设置，可拖动";
     [self layoutOverlay];
@@ -195,7 +200,7 @@ static uintptr_t LocateSettings() {
     self.bodyButton=[self makeButton:@selector(toggleBody) label:@"身体瞄准，与锁头互斥" root:scroll];
     self.zoomButton=[self makeButton:@selector(toggleZoom) label:@"缩小地图内容比例" root:scroll];
     self.fireButton=[self makeButton:@selector(toggleFire) label:@"对准后自动开火" root:scroll];
-    UILabel *title=[UILabel new];title.text=@"FH 0.5";title.textColor=UIColor.whiteColor;
+    UILabel *title=[UILabel new];title.text=@"FH 0.6";title.textColor=UIColor.whiteColor;
     title.font=[UIFont systemFontOfSize:13 weight:UIFontWeightSemibold];
     UIButton *close=[UIButton buttonWithType:UIButtonTypeSystem];[close setTitle:@"收起" forState:UIControlStateNormal];
     [close addTarget:self action:@selector(togglePanel) forControlEvents:UIControlEventTouchUpInside];
@@ -242,7 +247,7 @@ static uintptr_t LocateSettings() {
         b.enabled=supported;
         if(!supported) [b setTitle:@"版本不支持" forState:UIControlStateNormal];
     }
-    if(supported) [self refresh];else self.report.text=@"FH 0.5 · 游戏版本不支持，未启用";
+    if(supported) [self refresh];else self.report.text=@"FH 0.6 · 游戏版本不支持，未启用";
     self.window.hidden=NO;
     if(supported) {
         self.timer=[NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(refresh) userInfo:nil repeats:YES];
