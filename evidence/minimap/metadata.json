@@ -6,6 +6,48 @@
       "section": 1,
       "file": "107a9ef48.bin",
       "size": 17128
+    },
+    {
+      "name": "__ZN16UGameplayStatics17execGetPlayerPawnEP7UObjectR6FFramePv",
+      "address": 4350904736,
+      "section": 1,
+      "file": "1035589a0.bin",
+      "size": 212
+    },
+    {
+      "name": "__ZN17APlayerController10execGetHUDEP7UObjectR6FFramePv",
+      "address": 4357414800,
+      "section": 1,
+      "file": "103b8df90.bin",
+      "size": 28
+    },
+    {
+      "name": "__ZNK6UWorld24GetFirstPlayerControllerEv",
+      "address": 4363437076,
+      "section": 1,
+      "file": "10414c414.bin",
+      "size": 28
+    },
+    {
+      "name": "__ZN15UFHBodyRegistry6GatherEPK6UWorldR6TArrayIP16AFHCharacterBase21TSizedInlineAllocatorILj16ELi32E22TSizedDefaultAllocatorILi32EEEE",
+      "address": 4416875132,
+      "section": 1,
+      "file": "107442a7c.bin",
+      "size": 1324
+    },
+    {
+      "name": "__ZN8FHDamage11IsBodyAliveEPK6AActor",
+      "address": 4418349880,
+      "section": 1,
+      "file": "1075aab38.bin",
+      "size": 152
+    },
+    {
+      "name": "__ZN6FHTeam10IsFriendlyEPK6AActorS2_",
+      "address": 4422087460,
+      "section": 1,
+      "file": "10793b324.bin",
+      "size": 352
     }
   ]
 }
