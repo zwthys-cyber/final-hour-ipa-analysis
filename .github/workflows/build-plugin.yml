@@ -19,6 +19,10 @@ jobs:
           mkdir -p build
           clang++ -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined tests/AimSettingsTests.cpp -o build/settings-tests
           ./build/settings-tests
+      - name: Test temporary radar writes and restoration on GitHub runner
+        run: |
+          clang++ -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined tests/RadarStampTests.cpp -o build/radar-tests
+          ./build/radar-tests
       - name: Compile arm64 iOS dynamic library
         run: |
           SDK_PATH="$(xcrun --sdk iphoneos --show-sdk-path)"

@@ -1,12 +1,13 @@
 # FINAL HOUR 0.2.10 — 静态分析与注入插件
 
-已发布实验版 [FHAssist v0.1.0](https://github.com/zwthys-cyber/final-hour-ipa-analysis/releases/tag/v0.1.0)，提供 `FHAssist.dylib`、压缩包与 SHA-256 校验值。插件增强游戏已有的跟瞄，可调强度、距离和捕获范围；包含版本校验、悬浮菜单和关闭恢复。它不是独立锁头实现，尚未在真机注入测试。
+当前源码提供“小地图敌人持续显示”实验版：只有一个开关，使用左上角原生地图，
+不要求敌人先开火。本版已移除复杂跟瞄设置；旧版 v0.1.0 release 仍是跟瞄插件，
+不能当作新版雷达下载。尚未进行真机注入验证。
 
-- [直接下载 FHAssist.dylib](https://github.com/zwthys-cyber/final-hour-ipa-analysis/releases/download/v0.1.0/FHAssist.dylib)，通过巨魔注入器添加到游戏，重开后点击 FH 并启用增强。
-- [已通过的构建记录](https://github.com/zwthys-cyber/final-hour-ipa-analysis/actions/runs/45392279359)：带 AddressSanitizer/UndefinedBehaviorSanitizer 的参数测试、iOS arm64 交叉编译、ad hoc 签名验证与架构检查。
+- 新版构建产物：[GitHub Actions](https://github.com/zwthys-cyber/final-hour-ipa-analysis/actions/workflows/build-plugin.yml)，下载对应最新提交的 `FHAssist-0.2.10-arm64` artifact。
 - 使用说明：[plugin/INSTALL.zh-CN.md](plugin/INSTALL.zh-CN.md)。
-- 实现依据：[plugin/RESEARCH.md](plugin/RESEARCH.md)。
-- 编译及参数测试全部在 GitHub runner 执行，当前服务器不编译或运行游戏/插件。
+- 实现依据与限制：[plugin/MINIMAP_RESEARCH.zh-CN.md](plugin/MINIMAP_RESEARCH.zh-CN.md)。
+- 反汇编、参数测试、编译及签名检查全部在 GitHub runner 执行，当前服务器不编译或运行游戏/插件。
 
 ## 结论
 
