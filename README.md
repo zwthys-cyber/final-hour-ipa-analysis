@@ -1,8 +1,9 @@
 # FINAL HOUR 0.2.10 — 静态分析与注入插件
 
-已增加 `FHAssist.dylib` 的源码与 GitHub Actions 构建流程。插件增强游戏已有的跟瞄，可调强度、距离和捕获范围；包含版本校验、悬浮菜单和关闭恢复。它不是独立锁头实现，尚未在真机注入测试。
+已发布实验版 [FHAssist v0.1.0](https://github.com/zwthys-cyber/final-hour-ipa-analysis/releases/tag/v0.1.0)，提供 `FHAssist.dylib`、压缩包与 SHA-256 校验值。插件增强游戏已有的跟瞄，可调强度、距离和捕获范围；包含版本校验、悬浮菜单和关闭恢复。它不是独立锁头实现，尚未在真机注入测试。
 
-- 构建：GitHub → Actions → **Build iOS plugin** → 成功运行的产物。
+- [直接下载 FHAssist.dylib](https://github.com/zwthys-cyber/final-hour-ipa-analysis/releases/download/v0.1.0/FHAssist.dylib)，通过巨魔注入器添加到游戏，重开后点击 FH 并启用增强。
+- [已通过的构建记录](https://github.com/zwthys-cyber/final-hour-ipa-analysis/actions/runs/45392279359)：带 AddressSanitizer/UndefinedBehaviorSanitizer 的参数测试、iOS arm64 交叉编译、ad hoc 签名验证与架构检查。
 - 使用说明：[plugin/INSTALL.zh-CN.md](plugin/INSTALL.zh-CN.md)。
 - 实现依据：[plugin/RESEARCH.md](plugin/RESEARCH.md)。
 - 编译及参数测试全部在 GitHub runner 执行，当前服务器不编译或运行游戏/插件。
@@ -53,7 +54,7 @@ Info.plist 的本地网络说明写明会直接连接队友，包括同一 Wi-Fi
 
 当前服务器约 1GB 内存；首次尝试整文件字符串提取后用户报告服务器卡死，原因未独立确认。后续改为 1MiB 分块关键词检索、96MiB 地址空间和 20 秒 CPU 上限、低优先级读取。扫描脚本位于 `tools/scan_binary.py`，没有任何加载或运行目标二进制的逻辑。
 
-仓库只保存分析文档、工具和静态证据，不上传完整 IPA、完整游戏二进制、视频或美术资源；静态证据中仅包含用于核对的小段函数机器码。无需构建即可阅读，未创建自动运行游戏的工作流。
+仓库保存分析文档、插件源码、工具和静态证据，不上传完整 IPA、完整游戏二进制、视频或美术资源；静态证据中仅包含用于核对的小段函数机器码。无需构建即可阅读，未创建自动运行游戏的工作流。
 
 ## 证据
 
