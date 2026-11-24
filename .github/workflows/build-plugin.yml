@@ -36,9 +36,9 @@ jobs:
           xcrun lipo -archs build/FHAssist.dylib | grep -qx arm64
           xcrun otool -L build/FHAssist.dylib
           xcrun otool -l build/FHAssist.dylib > build/load-commands.txt
-          shasum -a 256 build/FHAssist.dylib > build/SHA256SUMS
           cp plugin/INSTALL.zh-CN.md build/INSTALL.zh-CN.md
           cd build
+          shasum -a 256 FHAssist.dylib > SHA256SUMS
           zip FHAssist-0.2.10-arm64.zip FHAssist.dylib INSTALL.zh-CN.md SHA256SUMS load-commands.txt
       - uses: actions/upload-artifact@v4
         with:
