@@ -25,7 +25,7 @@ jobs:
           xcrun --sdk iphoneos clang++ -std=c++17 -target arm64-apple-ios17.0 \
             -isysroot "$SDK_PATH" -fobjc-arc -fvisibility=hidden \
             -Wall -Wextra -Werror -O2 -dynamiclib \
-            -framework UIKit -framework Foundation \
+            -framework UIKit -framework Foundation -framework CoreGraphics \
             -Wl,-install_name,@rpath/FHAssist.dylib \
             plugin/FHAssist.mm -o build/FHAssist.dylib
       - name: Ad hoc sign and inspect the dylib
