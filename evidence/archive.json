@@ -1,0 +1,372 @@
+[
+  {
+    "path": "Payload/",
+    "size": 0,
+    "compressed_size": 0
+  },
+  {
+    "path": "Payload/FinalHour.app/",
+    "size": 0,
+    "compressed_size": 0
+  },
+  {
+    "path": "Payload/FinalHour.app/_CodeSignature/",
+    "size": 0,
+    "compressed_size": 0
+  },
+  {
+    "path": "Payload/FinalHour.app/_CodeSignature/CodeResources",
+    "size": 22437,
+    "compressed_size": 5084
+  },
+  {
+    "path": "Payload/FinalHour.app/Info.plist",
+    "size": 5456,
+    "compressed_size": 1441
+  },
+  {
+    "path": "Payload/FinalHour.app/FinalHour",
+    "size": 515201072,
+    "compressed_size": 134564848
+  },
+  {
+    "path": "Payload/FinalHour.app/notices.txt",
+    "size": 111,
+    "compressed_size": 101
+  },
+  {
+    "path": "Payload/FinalHour.app/Manifest_UFSFiles_IOS.txt",
+    "size": 3829328,
+    "compressed_size": 203784
+  },
+  {
+    "path": "Payload/FinalHour.app/uecommandline.txt",
+    "size": 48,
+    "compressed_size": 32
+  },
+  {
+    "path": "Payload/FinalHour.app/AppIcon60x60@2x.png",
+    "size": 44004,
+    "compressed_size": 43846
+  },
+  {
+    "path": "Payload/FinalHour.app/UEMetadata/",
+    "size": 0,
+    "compressed_size": 0
+  },
+  {
+    "path": "Payload/FinalHour.app/UEMetadata/PrivacyInfo.xcprivacy",
+    "size": 2515,
+    "compressed_size": 463
+  },
+  {
+    "path": "Payload/FinalHour.app/Manifest_NonUFSFiles_IOS.txt",
+    "size": 483,
+    "compressed_size": 283
+  },
+  {
+    "path": "Payload/FinalHour.app/Assets.car",
+    "size": 2806232,
+    "compressed_size": 2779390
+  },
+  {
+    "path": "Payload/FinalHour.app/AppIcon76x76@2x~ipad.png",
+    "size": 68860,
+    "compressed_size": 68616
+  },
+  {
+    "path": "Payload/FinalHour.app/mute.caf",
+    "size": 7298,
+    "compressed_size": 707
+  },
+  {
+    "path": "Payload/FinalHour.app/PrivacyInfo.xcprivacy",
+    "size": 4596,
+    "compressed_size": 528
+  },
+  {
+    "path": "Payload/FinalHour.app/LaunchScreen.storyboardc/",
+    "size": 0,
+    "compressed_size": 0
+  },
+  {
+    "path": "Payload/FinalHour.app/LaunchScreen.storyboardc/01J-lp-oVM-view-Ze5-6b-2t3.nib",
+    "size": 1551,
+    "compressed_size": 957
+  },
+  {
+    "path": "Payload/FinalHour.app/LaunchScreen.storyboardc/LaunchScreen.nib",
+    "size": 973,
+    "compressed_size": 627
+  },
+  {
+    "path": "Payload/FinalHour.app/LaunchScreen.storyboardc/Info.plist",
+    "size": 193,
+    "compressed_size": 144
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/",
+    "size": 0,
+    "compressed_size": 0
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/engine/",
+    "size": 0,
+    "compressed_size": 0
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/engine/config/",
+    "size": 0,
+    "compressed_size": 0
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/engine/config/stagedbuild_finalhour.ini",
+    "size": 3,
+    "compressed_size": 3
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/engine/content/",
+    "size": 0,
+    "compressed_size": 0
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/engine/content/renderer/",
+    "size": 0,
+    "compressed_size": 0
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/engine/content/renderer/tessellationtable.bin",
+    "size": 259568,
+    "compressed_size": 123632
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/engine/extras/",
+    "size": 0,
+    "compressed_size": 0
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/engine/extras/gpudumpviewer/",
+    "size": 0,
+    "compressed_size": 0
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/engine/extras/gpudumpviewer/opengpudumpviewer.sh",
+    "size": 2060,
+    "compressed_size": 1074
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/engine/extras/gpudumpviewer/opengpudumpviewer.bat",
+    "size": 879,
+    "compressed_size": 421
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/engine/extras/gpudumpviewer/gpudumpviewer.html",
+    "size": 195428,
+    "compressed_size": 38652
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/finalhour/",
+    "size": 0,
+    "compressed_size": 0
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/finalhour/content/",
+    "size": 0,
+    "compressed_size": 0
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/finalhour/content/paks/",
+    "size": 0,
+    "compressed_size": 0
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/finalhour/content/paks/pakchunk0-ios.utoc",
+    "size": 815692,
+    "compressed_size": 649073
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/finalhour/content/paks/pakchunk0_s3-ios.pak",
+    "size": 365,
+    "compressed_size": 177
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/finalhour/content/paks/pakchunk0-ios.ucas",
+    "size": 223546960,
+    "compressed_size": 222703464
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/finalhour/content/paks/pakchunk0_s2-ios.utoc",
+    "size": 1286604,
+    "compressed_size": 1004109
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/finalhour/content/paks/pakchunk0_s3-ios.utoc",
+    "size": 237814,
+    "compressed_size": 170265
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/finalhour/content/paks/pakchunk0_s3-ios.ucas",
+    "size": 75262512,
+    "compressed_size": 75146367
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/finalhour/content/paks/pakchunk0_s2-ios.ucas",
+    "size": 523010816,
+    "compressed_size": 520432979
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/finalhour/content/paks/pakchunk0_s2-ios.pak",
+    "size": 365,
+    "compressed_size": 178
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/finalhour/content/paks/pakchunk0_s5-ios.utoc",
+    "size": 192350,
+    "compressed_size": 151327
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/finalhour/content/paks/pakchunk0_s4-ios.utoc",
+    "size": 817596,
+    "compressed_size": 651769
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/finalhour/content/paks/pakchunk0_s4-ios.ucas",
+    "size": 196793056,
+    "compressed_size": 195532313
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/finalhour/content/paks/pakchunk0_s5-ios.ucas",
+    "size": 61357952,
+    "compressed_size": 60749451
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/finalhour/content/paks/pakchunk0_s1-ios.pak",
+    "size": 365,
+    "compressed_size": 178
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/finalhour/content/paks/global.ucas",
+    "size": 3704784,
+    "compressed_size": 1462709
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/finalhour/content/paks/pakchunk0_s1-ios.ucas",
+    "size": 221227488,
+    "compressed_size": 221003089
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/finalhour/content/paks/pakchunk0_s4-ios.pak",
+    "size": 601288,
+    "compressed_size": 600853
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/finalhour/content/paks/global.utoc",
+    "size": 878,
+    "compressed_size": 201
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/finalhour/content/paks/pakchunk0_s1-ios.utoc",
+    "size": 311876,
+    "compressed_size": 235905
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/finalhour/content/paks/pakchunk0_s5-ios.pak",
+    "size": 9574,
+    "compressed_size": 9421
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/finalhour/content/paks/pakchunk0-ios.pak",
+    "size": 85256549,
+    "compressed_size": 84851010
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/finalhour/content/movies/",
+    "size": 0,
+    "compressed_size": 0
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/finalhour/content/movies/fh_bootbg.mp4",
+    "size": 11579594,
+    "compressed_size": 11579594
+  },
+  {
+    "path": "Payload/FinalHour.app/cookeddata/finalhour/content/movies/fh_loginbg.mp4",
+    "size": 10843078,
+    "compressed_size": 10842864
+  },
+  {
+    "path": "Payload/FinalHour.app/Frameworks/",
+    "size": 0,
+    "compressed_size": 0
+  },
+  {
+    "path": "Payload/FinalHour.app/Frameworks/MarketplaceKitWrapper.framework/",
+    "size": 0,
+    "compressed_size": 0
+  },
+  {
+    "path": "Payload/FinalHour.app/Frameworks/MarketplaceKitWrapper.framework/_CodeSignature/",
+    "size": 0,
+    "compressed_size": 0
+  },
+  {
+    "path": "Payload/FinalHour.app/Frameworks/MarketplaceKitWrapper.framework/_CodeSignature/CodeResources",
+    "size": 2800,
+    "compressed_size": 662
+  },
+  {
+    "path": "Payload/FinalHour.app/Frameworks/MarketplaceKitWrapper.framework/Info.plist",
+    "size": 1074,
+    "compressed_size": 420
+  },
+  {
+    "path": "Payload/FinalHour.app/Frameworks/MarketplaceKitWrapper.framework/MarketplaceKitWrapper",
+    "size": 200048,
+    "compressed_size": 41297
+  },
+  {
+    "path": "Payload/FinalHour.app/Frameworks/EOSSDK.framework/",
+    "size": 0,
+    "compressed_size": 0
+  },
+  {
+    "path": "Payload/FinalHour.app/Frameworks/EOSSDK.framework/_CodeSignature/",
+    "size": 0,
+    "compressed_size": 0
+  },
+  {
+    "path": "Payload/FinalHour.app/Frameworks/EOSSDK.framework/_CodeSignature/CodeResources",
+    "size": 3010,
+    "compressed_size": 737
+  },
+  {
+    "path": "Payload/FinalHour.app/Frameworks/EOSSDK.framework/PrivacyInfo.xcprivacy",
+    "size": 2862,
+    "compressed_size": 432
+  },
+  {
+    "path": "Payload/FinalHour.app/Frameworks/EOSSDK.framework/EOSSDK",
+    "size": 11930704,
+    "compressed_size": 5761662
+  },
+  {
+    "path": "Payload/FinalHour.app/Frameworks/EOSSDK.framework/Info.plist",
+    "size": 1466,
+    "compressed_size": 514
+  },
+  {
+    "path": "Payload/FinalHour.app/LaunchScreenIOS.png",
+    "size": 12299,
+    "compressed_size": 165
+  },
+  {
+    "path": "Payload/FinalHour.app/Manifest_DebugFiles_IOS.txt",
+    "size": 257,
+    "compressed_size": 96
+  },
+  {
+    "path": "Payload/FinalHour.app/PkgInfo",
+    "size": 8,
+    "compressed_size": 8
+  }
+]

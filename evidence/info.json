@@ -1,0 +1,107 @@
+{
+  "UIRequiredDeviceCapabilities": [
+    "arm64",
+    "metal"
+  ],
+  "UIRequiresFullScreen": true,
+  "CFBundleInfoDictionaryVersion": "6.0",
+  "EpicAppVersion": "0.4171 11-23 11:28",
+  "DTPlatformVersion": "27.0",
+  "UIInterfaceOrientation": "UIInterfaceOrientationLandscapeLeft",
+  "DTSDKName": "iphoneos27.0",
+  "CFBundleName": "FinalHour",
+  "UIViewControllerBasedStatusBarAppearance": false,
+  "CFBundleURLTypes": [
+    {
+      "CFBundleURLName": "com.Epic.Unreal",
+      "CFBundleURLSchemes": [
+        "FinalHour"
+      ]
+    }
+  ],
+  "DTAppStoreToolsBuild": "27B52",
+  "CFBundleIcons": {
+    "CFBundlePrimaryIcon": {
+      "CFBundleIconFiles": [
+        "AppIcon60x60"
+      ],
+      "CFBundleIconName": "AppIcon",
+      "UIPrerenderedIcon": true
+    }
+  },
+  "DTCompiler": "com.apple.compilers.llvm.clang.1_0",
+  "LSApplicationCategoryType": "public.app-category.action-games",
+  "LSRequiresIPhoneOS": true,
+  "LSSupportsGameMode": true,
+  "CFBundleDisplayName": "FINAL HOUR",
+  "DTSDKBuild": "24A430",
+  "NSCameraUsageDescription": "FINAL HOUR does not use the camera.",
+  "CFBundleShortVersionString": "0.2.10",
+  "TVTopShelfImage": {
+    "TVTopShelfPrimaryImageWide": "Top Shelf Image Wide"
+  },
+  "CFBundleSupportedPlatforms": [
+    "iPhoneOS"
+  ],
+  "UISupportedInterfaceOrientations": [
+    "UIInterfaceOrientationLandscapeLeft",
+    "UIInterfaceOrientationLandscapeRight"
+  ],
+  "BuildMachineOSBuild": "26B131",
+  "DTPlatformBuild": "24A430",
+  "UIFileSharingEnabled": false,
+  "CFBundlePackageType": "APPL",
+  "CFBundleDevelopmentRegion": "English",
+  "EpicPackagingMode": "Distribution",
+  "CFBundleVersion": "0.4172",
+  "DTXcodeBuild": "27A266a",
+  "UIStatusBarHidden": true,
+  "MinimumOSVersion": "17.0",
+  "GCSupportsGameMode": true,
+  "UIDeviceFamily": [
+    1,
+    2
+  ],
+  "UILaunchStoryboardName": "LaunchScreen",
+  "NSMicrophoneUsageDescription": "FINAL HOUR does not use the microphone.",
+  "CFBundleIdentifier": "com.aggames.finalhour",
+  "UIApplicationSceneManifest": {
+    "UIApplicationSupportsMultipleScenes": false,
+    "UISceneConfigurations": {
+      "UIWindowSceneSessionRoleApplication": [
+        {
+          "UISceneConfigurationName": "Default Configuration",
+          "UISceneDelegateClassName": "IOSSceneDelegate"
+        }
+      ]
+    }
+  },
+  "DTXcode": "2700",
+  "CFBundleExecutable": "FinalHour",
+  "NSAppTransportSecurity": {
+    "NSAllowsArbitraryLoads": true,
+    "NSExceptionDomains": {
+      "169.245.0.0/16": {
+        "NSExceptionAllowsInsecureHTTPLoads": true,
+        "NSIncludesSubdomains": true
+      }
+    },
+    "NSAllowsLocalNetworking": true,
+    "NSAllowsArbitraryLoadsInWebContent": true
+  },
+  "CFBundleIcons~ipad": {
+    "CFBundlePrimaryIcon": {
+      "CFBundleIconFiles": [
+        "AppIcon60x60",
+        "AppIcon76x76"
+      ],
+      "CFBundleIconName": "AppIcon",
+      "UIPrerenderedIcon": true
+    }
+  },
+  "CFBundleSignature": "????",
+  "DTPlatformName": "iphoneos",
+  "NSLocalNetworkUsageDescription": "FINAL HOUR connects directly to your squad members when you team up, including players on the same Wi-Fi network.",
+  "ITSAppUsesNonExemptEncryption": false,
+  "CADisableMinimumFrameDurationOnPhone": true
+}
