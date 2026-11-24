@@ -1,0 +1,493 @@
+{
+  "uuid": "c180d5c919a53a9d9f63543607fdf175",
+  "segments": [
+    {
+      "name": "__PAGEZERO",
+      "vm": 0,
+      "size": 4294967296,
+      "offset": 0,
+      "filesize": 0
+    },
+    {
+      "name": "__TEXT",
+      "vm": 4294967296,
+      "size": 221904896,
+      "offset": 0,
+      "filesize": 221904896
+    },
+    {
+      "name": "__DATA_CONST",
+      "vm": 4516872192,
+      "size": 23642112,
+      "offset": 221904896,
+      "filesize": 23642112
+    },
+    {
+      "name": "__DATA",
+      "vm": 4540514304,
+      "size": 6324224,
+      "offset": 245547008,
+      "filesize": 1392640
+    },
+    {
+      "name": "__LINKEDIT",
+      "vm": 4546838528,
+      "size": 268271616,
+      "offset": 246939648,
+      "filesize": 268261424
+    }
+  ],
+  "sections": [
+    {
+      "name": "__text",
+      "segment": "__TEXT",
+      "address": 4294983680,
+      "size": 192601796,
+      "offset": 16384
+    },
+    {
+      "name": "__stubs",
+      "segment": "__TEXT",
+      "address": 4487585476,
+      "size": 9372,
+      "offset": 192618180
+    },
+    {
+      "name": "__objc_stubs",
+      "segment": "__TEXT",
+      "address": 4487594848,
+      "size": 45664,
+      "offset": 192627552
+    },
+    {
+      "name": "__init_offsets",
+      "segment": "__TEXT",
+      "address": 4487640512,
+      "size": 44684,
+      "offset": 192673216
+    },
+    {
+      "name": "__objc_methlist",
+      "segment": "__TEXT",
+      "address": 4487685200,
+      "size": 17092,
+      "offset": 192717904
+    },
+    {
+      "name": "__const",
+      "segment": "__TEXT",
+      "address": 4487702336,
+      "size": 3058539,
+      "offset": 192735040
+    },
+    {
+      "name": "__gcc_except_tab",
+      "segment": "__TEXT",
+      "address": 4490760876,
+      "size": 119640,
+      "offset": 195793580
+    },
+    {
+      "name": "__cstring",
+      "segment": "__TEXT",
+      "address": 4490880528,
+      "size": 6166243,
+      "offset": 195913232
+    },
+    {
+      "name": "__ustring",
+      "segment": "__TEXT",
+      "address": 4497046772,
+      "size": 15664988,
+      "offset": 202079476
+    },
+    {
+      "name": "__objc_methname",
+      "segment": "__TEXT",
+      "address": 4512711760,
+      "size": 56251,
+      "offset": 217744464
+    },
+    {
+      "name": "__objc_classname",
+      "segment": "__TEXT",
+      "address": 4512768016,
+      "size": 2560,
+      "offset": 217800720
+    },
+    {
+      "name": "__objc_methtype",
+      "segment": "__TEXT",
+      "address": 4512770576,
+      "size": 24425,
+      "offset": 217803280
+    },
+    {
+      "name": "__swift5_typeref",
+      "segment": "__TEXT",
+      "address": 4512795002,
+      "size": 866,
+      "offset": 217827706
+    },
+    {
+      "name": "__swift5_capture",
+      "segment": "__TEXT",
+      "address": 4512795868,
+      "size": 212,
+      "offset": 217828572
+    },
+    {
+      "name": "__constg_swiftt",
+      "segment": "__TEXT",
+      "address": 4512796080,
+      "size": 176,
+      "offset": 217828784
+    },
+    {
+      "name": "__swift5_fieldmd",
+      "segment": "__TEXT",
+      "address": 4512796256,
+      "size": 72,
+      "offset": 217828960
+    },
+    {
+      "name": "__swift5_reflstr",
+      "segment": "__TEXT",
+      "address": 4512796336,
+      "size": 61,
+      "offset": 217829040
+    },
+    {
+      "name": "__swift5_assocty",
+      "segment": "__TEXT",
+      "address": 4512796400,
+      "size": 80,
+      "offset": 217829104
+    },
+    {
+      "name": "__swift5_proto",
+      "segment": "__TEXT",
+      "address": 4512796480,
+      "size": 12,
+      "offset": 217829184
+    },
+    {
+      "name": "__swift5_types",
+      "segment": "__TEXT",
+      "address": 4512796492,
+      "size": 12,
+      "offset": 217829196
+    },
+    {
+      "name": "__swift_as_entry",
+      "segment": "__TEXT",
+      "address": 4512796504,
+      "size": 20,
+      "offset": 217829208
+    },
+    {
+      "name": "__swift_as_ret",
+      "segment": "__TEXT",
+      "address": 4512796524,
+      "size": 16,
+      "offset": 217829228
+    },
+    {
+      "name": "__swift_as_cont",
+      "segment": "__TEXT",
+      "address": 4512796540,
+      "size": 16,
+      "offset": 217829244
+    },
+    {
+      "name": "__unwind_info",
+      "segment": "__TEXT",
+      "address": 4512796556,
+      "size": 4049736,
+      "offset": 217829260
+    },
+    {
+      "name": "__eh_frame",
+      "segment": "__TEXT",
+      "address": 4516846296,
+      "size": 2152,
+      "offset": 221879000
+    },
+    {
+      "name": "__oslogstring",
+      "segment": "__TEXT",
+      "address": 4516855808,
+      "size": 782,
+      "offset": 221888512
+    },
+    {
+      "name": "__const",
+      "segment": "__DATA_CONST",
+      "address": 4516872192,
+      "size": 23619592,
+      "offset": 221904896
+    },
+    {
+      "name": "__cfstring",
+      "segment": "__DATA_CONST",
+      "address": 4540491784,
+      "size": 11776,
+      "offset": 245524488
+    },
+    {
+      "name": "__objc_classlist",
+      "segment": "__DATA_CONST",
+      "address": 4540503560,
+      "size": 536,
+      "offset": 245536264
+    },
+    {
+      "name": "__objc_nlclslist",
+      "segment": "__DATA_CONST",
+      "address": 4540504096,
+      "size": 8,
+      "offset": 245536800
+    },
+    {
+      "name": "__objc_catlist",
+      "segment": "__DATA_CONST",
+      "address": 4540504104,
+      "size": 8,
+      "offset": 245536808
+    },
+    {
+      "name": "__objc_protolist",
+      "segment": "__DATA_CONST",
+      "address": 4540504112,
+      "size": 296,
+      "offset": 245536816
+    },
+    {
+      "name": "__objc_imageinfo",
+      "segment": "__DATA_CONST",
+      "address": 4540504408,
+      "size": 8,
+      "offset": 245537112
+    },
+    {
+      "name": "__objc_arraydata",
+      "segment": "__DATA_CONST",
+      "address": 4540504416,
+      "size": 64,
+      "offset": 245537120
+    },
+    {
+      "name": "__objc_arrayobj",
+      "segment": "__DATA_CONST",
+      "address": 4540504480,
+      "size": 120,
+      "offset": 245537184
+    },
+    {
+      "name": "__objc_floatobj",
+      "segment": "__DATA_CONST",
+      "address": 4540504600,
+      "size": 16,
+      "offset": 245537304
+    },
+    {
+      "name": "__objc_intobj",
+      "segment": "__DATA_CONST",
+      "address": 4540504616,
+      "size": 48,
+      "offset": 245537320
+    },
+    {
+      "name": "__got",
+      "segment": "__DATA_CONST",
+      "address": 4540504664,
+      "size": 8064,
+      "offset": 245537368
+    },
+    {
+      "name": "__objc_const",
+      "segment": "__DATA",
+      "address": 4540514304,
+      "size": 30160,
+      "offset": 245547008
+    },
+    {
+      "name": "__objc_selrefs",
+      "segment": "__DATA",
+      "address": 4540544464,
+      "size": 15328,
+      "offset": 245577168
+    },
+    {
+      "name": "__objc_classrefs",
+      "segment": "__DATA",
+      "address": 4540559792,
+      "size": 1632,
+      "offset": 245592496
+    },
+    {
+      "name": "__objc_superrefs",
+      "segment": "__DATA",
+      "address": 4540561424,
+      "size": 424,
+      "offset": 245594128
+    },
+    {
+      "name": "__objc_ivar",
+      "segment": "__DATA",
+      "address": 4540561848,
+      "size": 1236,
+      "offset": 245594552
+    },
+    {
+      "name": "__objc_data",
+      "segment": "__DATA",
+      "address": 4540563088,
+      "size": 5456,
+      "offset": 245595792
+    },
+    {
+      "name": "__data",
+      "segment": "__DATA",
+      "address": 4540568576,
+      "size": 1323775,
+      "offset": 245601280
+    },
+    {
+      "name": "__thread_vars",
+      "segment": "__DATA",
+      "address": 4541892352,
+      "size": 4920,
+      "offset": 246925056
+    },
+    {
+      "name": "__thread_data",
+      "segment": "__DATA",
+      "address": 4541897280,
+      "size": 3128,
+      "offset": 246929984
+    },
+    {
+      "name": "__thread_bss",
+      "segment": "__DATA",
+      "address": 4541900416,
+      "size": 4052,
+      "offset": 0
+    },
+    {
+      "name": "__common",
+      "segment": "__DATA",
+      "address": 4541904512,
+      "size": 1167080,
+      "offset": 0
+    },
+    {
+      "name": "__bss",
+      "segment": "__DATA",
+      "address": 4543071616,
+      "size": 3755936,
+      "offset": 0
+    }
+  ],
+  "symbols": [
+    {
+      "name": "__ZN19AFHPlayerController13TickAimAssistEv",
+      "address": 4420939388,
+      "section": 1,
+      "end": 4420941676,
+      "file": "107822e7c.bin",
+      "size": 2288,
+      "offset": 125972092
+    },
+    {
+      "name": "__ZN19AFHPlayerController20ApplyAimAssistFollowEv",
+      "address": 4420942736,
+      "section": 1,
+      "end": 4420943484,
+      "file": "107823b90.bin",
+      "size": 748,
+      "offset": 125975440
+    },
+    {
+      "name": "__ZN21FThreadSafeStaticStatIZZN19AFHPlayerController13TickAimAssistEvENK3$_1clEvE17FStat_FHAimAssistEC1Ev",
+      "address": 4421014228,
+      "section": 1
+    },
+    {
+      "name": "__ZN19AFHPlayerController13TickAimAssistEv.cold.1",
+      "address": 4484069724,
+      "section": 1
+    },
+    {
+      "name": "__ZN19AFHPlayerController13TickAimAssistEv.cold.2",
+      "address": 4484069752,
+      "section": 1
+    },
+    {
+      "name": "__ZN19AFHPlayerController13TickAimAssistEv.cold.3",
+      "address": 4484069780,
+      "section": 1
+    },
+    {
+      "name": "__ZN19AFHPlayerController13TickAimAssistEv.cold.4",
+      "address": 4484069836,
+      "section": 1
+    },
+    {
+      "name": "__ZN46Z_Construct_UClass_AFHPlayerController_Statics20NewProp_AimAssistRawE",
+      "address": 4530245208,
+      "section": 27
+    },
+    {
+      "name": "__ZN46Z_Construct_UClass_AFHPlayerController_Statics27NewProp_AimAssistPitchScaleE",
+      "address": 4530245264,
+      "section": 27
+    },
+    {
+      "name": "__ZN46Z_Construct_UClass_AFHPlayerController_Statics22NewProp_AimAssistScaleE",
+      "address": 4530245376,
+      "section": 27
+    },
+    {
+      "name": "__ZN46Z_Construct_UClass_AFHPlayerController_Statics23NewProp_AimAssistTargetE",
+      "address": 4530245432,
+      "section": 27
+    },
+    {
+      "name": "__ZN46Z_Construct_UClass_AFHPlayerController_Statics29NewProp_AimAssistFollowFramesE",
+      "address": 4530245488,
+      "section": 27
+    },
+    {
+      "name": "__ZN46Z_Construct_UClass_AFHPlayerController_Statics29NewProp_AimAssistFollowDegSumE",
+      "address": 4530245544,
+      "section": 27
+    },
+    {
+      "name": "__ZN46Z_Construct_UClass_AFHPlayerController_Statics29NewProp_AimAssistSlowedInputsE",
+      "address": 4530245600,
+      "section": 27
+    },
+    {
+      "name": "__ZN46Z_Construct_UClass_AFHPlayerController_Statics22NewProp_AimAssistTicksE",
+      "address": 4530245656,
+      "section": 27
+    },
+    {
+      "name": "__ZN46Z_Construct_UClass_AFHPlayerController_Statics30NewProp_AimAssistOnTargetTicksE",
+      "address": 4530245712,
+      "section": 27
+    },
+    {
+      "name": "__ZN46Z_Construct_UClass_AFHPlayerController_Statics24NewProp_AimAssistBlockedE",
+      "address": 4530245768,
+      "section": 27
+    },
+    {
+      "name": "__ZN46Z_Construct_UClass_AFHPlayerController_Statics28NewProp_AimAssistLastBlockerE",
+      "address": 4530245824,
+      "section": 27
+    }
+  ],
+  "symbol_count": 5843960
+}
