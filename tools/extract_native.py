@@ -22,7 +22,7 @@ for start in range(0,count,4096):
   strx,typ,sect,desc,val=struct.unpack_from('<IBBHQ',block,idx)
   if not val or typ&0xe0 or (typ&0xe)!=0xe:continue
   f.seek(stro+strx);name=f.read(500).split(b'\0',1)[0].decode(errors='replace')
-  if any(k in name for k in ['AimAssist','aimassist']):found.append(dict(name=name,address=val,section=sect))
+  if 'AimAssist' in name or ('CVar' in name and any(k in name for k in ['Aim','AA','Follow'])):found.append(dict(name=name,address=val,section=sect))
 targets=[x for x in found if x['name'] in ['__ZN19AFHPlayerController13TickAimAssistEv','__ZN19AFHPlayerController20ApplyAimAssistFollowEv']]
 for item in targets:item['end']=item['address']+24576
 for start in range(0,count,4096):
