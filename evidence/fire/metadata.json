@@ -50,6 +50,48 @@
       "section": 1,
       "file": "103b83608.bin",
       "size": 36
+    },
+    {
+      "name": "__ZN18UFHCombatComponent11execTryFireEP7UObjectR6FFramePv",
+      "address": 4415919204,
+      "section": 1,
+      "file": "107359464.bin",
+      "size": 20
+    },
+    {
+      "name": "__ZN18UFHCombatComponent7TryFireEv",
+      "address": 4418104844,
+      "section": 1,
+      "file": "10756ee0c.bin",
+      "size": 412
+    },
+    {
+      "name": "__ZN20UKismetSystemLibrary15LineTraceSingleEPK7UObjectN2UE4Math7TVectorIdEES6_15ETraceTypeQuerybRK6TArrayIP6AActor22TSizedDefaultAllocatorILi32EEEN15EDrawDebugTrace4TypeER10FHitResultb12FLinearColorSK_f",
+      "address": 4352695912,
+      "section": 1,
+      "file": "10370de68.bin",
+      "size": 524
+    },
+    {
+      "name": "__ZNK20FActorInstanceHandle10FetchActorEv",
+      "address": 4350370128,
+      "section": 1,
+      "file": "1034d6150.bin",
+      "size": 204
+    },
+    {
+      "name": "__ZN12UEngineTypes18ConvertToTraceTypeE17ECollisionChannel",
+      "address": 4350469224,
+      "section": 1,
+      "file": "1034ee468.bin",
+      "size": 36
+    },
+    {
+      "name": "__ZN16UGameplayStatics14BreakHitResultERK10FHitResultRbS3_RfS4_RN2UE4Math7TVectorIdEES9_S9_S9_RP17UPhysicalMaterialRP6AActorRP19UPrimitiveComponentR5FNameSK_RiSL_SL_S9_S9_",
+      "address": 4350873744,
+      "section": 1,
+      "file": "103551090.bin",
+      "size": 564
     }
   ]
 }
