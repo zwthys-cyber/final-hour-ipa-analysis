@@ -2,7 +2,7 @@
 import sys,re,struct,time,resource
 resource.setrlimit(resource.RLIMIT_AS,(96*1024*1024,96*1024*1024))
 resource.setrlimit(resource.RLIMIT_CPU,(20,20))
-words=['FinalHour','AGGames','BattleRoyale','TeamDeathmatch','Hardpoint','SearchAndDestroy','++UE5']
+words=['FinalHour','AGGames','BattleRoyale','TeamDeathmatch','Hardpoint','SearchAndDestroy','++UE5','AimAssist','AutoAim','SetControlRotation','GetControlRotation','LineOfSightTo','FindLookAtRotation','FHPlayerController','FHCharacter','Targeting']
 patterns=[(w.encode(enc),enc) for w in words for enc in ['ascii','utf-16le']]
 found=set()
 with open(sys.argv[1],'rb') as f:
