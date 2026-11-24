@@ -1,6 +1,7 @@
 #pragma once
 #include <atomic>
 #include "RadarStamp.hpp"
+#include "HeadMath.hpp"
 #include <cmath>
 #include <cstdint>
 #include <cstring>
@@ -24,15 +25,20 @@ template<class T> static bool read(uintptr_t address,T &value) {
 }
 template<class T> static T function(uintptr_t offset) { return reinterpret_cast<T>(base+offset); }
 
+#include "HeadAim.hpp"
+
 static void draw(uintptr_t hud) {
     auto original=function<void(*)(uintptr_t)>(0x07a82154);
-    if(drawing || !enabled.load(std::memory_order_relaxed)) { original(hud);return; }
+    if(drawing || (!enabled.load(std::memory_order_relaxed) && !headEnabled.load(std::memory_order_relaxed))) { original(hud);return; }
     drawing=true;
     // Executed by the game's virtual DrawHUD call, on the game's own drawing thread.
     uintptr_t world=function<uintptr_t(*)(uintptr_t)>(0x02e43cb0)(hud);
     double now=0;
     if(!read(world+0x9d0,now) || !std::isfinite(now) || now<0) {
         original(hud);drawing=false;return;
+    }
+    if(!enabled.load(std::memory_order_relaxed)) {
+        original(hud);lockHead(world);drawing=false;return;
     }
     Bodies bodies;
     function<void(*)(uintptr_t,Bodies *)>(0x07442a7c)(world,&bodies);
@@ -63,7 +69,7 @@ static void draw(uintptr_t hud) {
         restoreStamp(reinterpret_cast<uint64_t *>(saved[i].address),stamp,saved[i].before);
     }
     if(bodies.heap) function<void(*)(uintptr_t)>(0x0067d710)(bodies.heap);
-    drawing=false;
+    lockHead(world);drawing=false;
 }
 
 static bool attach() {

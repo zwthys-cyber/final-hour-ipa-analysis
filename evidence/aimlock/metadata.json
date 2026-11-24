@@ -47,6 +47,12 @@
       "name": "USkeletalMeshComponent::StaticClass (bounded prefix)",
       "size": 128,
       "file": "102f12858.bin"
+    },
+    {
+      "address": 4348528224,
+      "name": "USkinnedMeshComponent::GetBoneIndex (bounded prefix)",
+      "size": 256,
+      "file": "103314660.bin"
     }
   ]
 }

@@ -1,7 +1,8 @@
 # FINAL HOUR 0.2.10 — 静态分析与注入插件
 
-当前源码提供“小地图敌人持续显示”实验版：只有一个开关，使用左上角原生地图，
-不要求敌人先开火。本版已移除复杂跟瞄设置；旧版 v0.1.0 release 仍是跟瞄插件，
+当前源码提供“小地图敌人持续显示”实验版：使用左上角原生地图，
+不要求敌人先开火。另有独立“锁头”开关，读取 head 骨骼，对准星附近、通过原生视线检查的存活敌人调整视角。
+两个开关默认关闭。本版已移除复杂跟瞄设置；旧版 v0.1.0 release 仍是跟瞄插件，
 不能当作新版雷达下载。尚未进行真机注入验证。
 
 - 新版构建产物：[GitHub Actions](https://github.com/zwthys-cyber/final-hour-ipa-analysis/actions/workflows/build-plugin.yml)，下载对应最新提交的 `FHAssist-0.2.10-arm64` artifact。

@@ -65,19 +65,27 @@ static uintptr_t LocateSettings() {
 @interface FHRadarController : NSObject
 @property(nonatomic,strong) FHRadarWindow *window;
 @property(nonatomic,strong) UIButton *button;
+@property(nonatomic,strong) UIButton *headButton;
 @property(nonatomic,strong) NSTimer *timer;
 - (void)install;
 @end
 @implementation FHRadarController
 - (void)refresh {
     BOOL on=radar::enabled.load();
-    BOOL attached=on && radar::attach();
+    BOOL head=radar::headEnabled.load();
+    BOOL attached=(on || head) && radar::attach();
     NSString *title=on?(attached?@"地图敌人：开":@"地图敌人：等待对局"):@"地图敌人：关";
     [self.button setTitle:title forState:UIControlStateNormal];
     self.button.accessibilityValue=title;
+    NSString *headTitle=head?(attached?@"锁头：开":@"锁头：等待对局"):@"锁头：关";
+    [self.headButton setTitle:headTitle forState:UIControlStateNormal];
+    self.headButton.accessibilityValue=headTitle;
 }
 - (void)toggle {
     radar::enabled.store(!radar::enabled.load());[self refresh];
+}
+- (void)toggleHead {
+    radar::headEnabled.store(!radar::headEnabled.load());[self refresh];
 }
 - (void)install {
     if(self.window) return;
@@ -109,6 +117,22 @@ static uintptr_t LocateSettings() {
         [self.button.widthAnchor constraintEqualToConstant:180],
         [self.button.heightAnchor constraintEqualToConstant:36]
     ]];
+    self.headButton=[UIButton buttonWithType:UIButtonTypeSystem];
+    self.headButton.translatesAutoresizingMaskIntoConstraints=NO;
+    self.headButton.backgroundColor=[UIColor colorWithWhite:.08 alpha:.85];self.headButton.layer.cornerRadius=10;
+    self.headButton.titleLabel.font=[UIFont systemFontOfSize:13 weight:UIFontWeightMedium];
+    [self.headButton setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
+    [self.headButton addTarget:self action:@selector(toggleHead) forControlEvents:UIControlEventTouchUpInside];
+    self.headButton.accessibilityLabel=@"切换可见敌人头部瞄准";
+    [root.view addSubview:self.headButton];
+    [NSLayoutConstraint activateConstraints:@[
+        [self.headButton.topAnchor constraintEqualToAnchor:self.button.bottomAnchor constant:6],
+        [self.headButton.centerXAnchor constraintEqualToAnchor:self.button.centerXAnchor],
+        [self.headButton.widthAnchor constraintEqualToAnchor:self.button.widthAnchor],
+        [self.headButton.heightAnchor constraintEqualToAnchor:self.button.heightAnchor]
+    ]];
+    self.headButton.enabled=supported;
+    if(!supported) [self.headButton setTitle:@"锁头：版本不支持" forState:UIControlStateNormal];
     self.button.enabled=supported;
     if(supported) [self refresh];
     else [self.button setTitle:@"地图敌人：版本不支持" forState:UIControlStateNormal];

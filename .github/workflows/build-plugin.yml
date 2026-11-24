@@ -23,6 +23,10 @@ jobs:
         run: |
           clang++ -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined tests/RadarStampTests.cpp -o build/radar-tests
           ./build/radar-tests
+      - name: Test head targeting geometry on GitHub runner
+        run: |
+          clang++ -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined tests/HeadMathTests.cpp -o build/head-tests
+          ./build/head-tests
       - name: Compile arm64 iOS dynamic library
         run: |
           SDK_PATH="$(xcrun --sdk iphoneos --show-sdk-path)"
