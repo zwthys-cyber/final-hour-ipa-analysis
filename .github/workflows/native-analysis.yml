@@ -16,6 +16,7 @@ jobs:
       - run: python tools/disassemble.py
       - run: python tools/disassemble.py evidence/minimap
       - run: python tools/disassemble.py evidence/aimlock
+      - run: python tools/disassemble.py evidence/fire
       - uses: actions/upload-artifact@v4
         with:
           name: native-disassembly

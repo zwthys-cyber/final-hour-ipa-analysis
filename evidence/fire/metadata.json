@@ -1,0 +1,24 @@
+{
+  "symbols": [
+    {
+      "name": "__ZN6AActor27execK2_GetComponentsByClassEP7UObjectR6FFramePv",
+      "address": 4343572808,
+      "section": 1,
+      "file": "102e5a948.bin",
+      "size": 252
+    },
+    {
+      "name": "__ZNK6AActor25ForEachComponent_InternalI15UActorComponentZNKS_13GetComponentsI22TSizedDefaultAllocatorILi32EES1_EEv11TSubclassOfIS1_ER6TArrayIPT0_T_EbEUlPS1_E_EEvS6_bS8_",
+      "address": 4343723208,
+      "section": 1,
+      "file": "102e7f4c8.bin",
+      "size": 472
+    },
+    {
+      "address": 4357349652,
+      "name": "AController::GetPawn bounded prefix",
+      "size": 64,
+      "file": "103b7e114.bin"
+    }
+  ]
+}
