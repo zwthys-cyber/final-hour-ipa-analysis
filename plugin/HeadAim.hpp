@@ -1,6 +1,7 @@
 // Included inside namespace radar, after the verified native read/function helpers.
 static std::atomic<bool> headEnabled{false};
 static std::atomic<unsigned> headState{0},enemyCount{0},boneCount{0},angleCount{0},visibleCount{0};
+static std::atomic<unsigned> cameraErrorDegrees{0};
 static std::atomic<uint64_t> hudFrames{0},viewWrites{0};
 struct Components {
     uintptr_t data=0;int32_t count=0,capacity=0;
@@ -18,11 +19,13 @@ static void lockHead(uintptr_t world) {
     uintptr_t camera=0,cameraTable=0,cameraLocation=0;
     Rotation view{};
     if(!pc || !pawn || !Readable(pawn,0x20,false)) { headState.store(2);return; }
-    if(!read(pc+0x348,view) || !read(pc+0x388,camera) || !camera || !read(camera,cameraTable) ||
+    if(!read(pc+0x388,camera) || !camera || !read(camera,cameraTable) ||
        !read(cameraTable+0x838,cameraLocation) || !Readable(cameraLocation,4,false)) { headState.store(3);return; }
     auto alive=function<bool(*)(uintptr_t)>(0x075aab38);
     if(!alive(pawn)) { headState.store(4);return; }
     Vector eye=reinterpret_cast<Vector(*)(uintptr_t)>(cameraLocation)(camera);
+    view=function<Rotation(*)(uintptr_t)>(0x03b83608)(camera);
+    if(!std::isfinite(view.pitch) || !std::isfinite(view.yaw)) { headState.store(3);return; }
     if(!headmath::finite(eye)) { headState.store(3);return; }
     static uint64_t headName=0;
     if(!headName) function<void(*)(uint64_t *,const char *)>(0x00969eec)(&headName,"head");
@@ -72,6 +75,7 @@ static void lockHead(uintptr_t world) {
            std::abs(headmath::wrap(after.yaw-best.yaw))<.01) viewWrites.fetch_add(1);
         else { headState.store(11);fireGate.update(false,0,0);return; }
     }
+    cameraErrorDegrees.store(targetActor?static_cast<unsigned>(std::ceil(bestError)):0);
     uint64_t key=0;
     if(targetActor) function<void(*)(uint64_t *,const uintptr_t *)>(0x0108881c)(&key,&targetActor);
     fire.gateEvaluated=true;

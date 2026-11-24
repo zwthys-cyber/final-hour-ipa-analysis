@@ -89,6 +89,7 @@ static uintptr_t LocateSettings() {
     NSString *states[] = {@"锁头未启用",@"正在检查角色",@"未获取到本地角色",@"未获取到有效镜头",@"本地角色未存活",@"骨骼类型初始化失败",@"没有存活敌人",@"敌人网格缺少 head 骨骼",@"目标超出角度或距离",@"目标未通过视线检查",@"已写入头部瞄准视角",@"视角写入核对失败",@"本地角色缺少开火组件"};
     unsigned state=radar::headState.load();
     NSString *reason=state<13?states[state]:@"等待检查";
+    if(state==10) reason=[NSString stringWithFormat:@"控制旋转已写 · 镜头差 %u°",radar::cameraErrorDegrees.load()];
     if(!attached) reason=@"等待进入支持的对局";
     else if(!frames || now-self.lastHeartbeatTime>=2) reason=@"HUD 回调未运行或已暂停";
     self.report.text=[NSString stringWithFormat:@"FH 0.3 · %@\n回调 %llu · 敌 %u · 头 %u · 范围 %u · 可见 %u · 写视角 %llu",reason,

@@ -43,6 +43,13 @@
       "size": 80,
       "name": "AFHHud::MinimapRangeCm",
       "file": "107ac5174.bin"
+    },
+    {
+      "name": "__ZNK20APlayerCameraManager17GetCameraRotationEv",
+      "address": 4357371400,
+      "section": 1,
+      "file": "103b83608.bin",
+      "size": 36
     }
   ]
 }

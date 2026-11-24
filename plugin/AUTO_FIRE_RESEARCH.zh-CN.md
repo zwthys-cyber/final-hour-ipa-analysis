@@ -30,3 +30,7 @@
 静态机器码位于 evidence/fire，反汇编只在 GitHub runner 执行。
 FirePolicyTests 覆盖两帧稳定、切目标、失去目标、关闭、未对准与无效角度时的状态重置。
 测试不覆盖设备上的输入处理、武器发射、镜头采用情况或命中效果。
+
+开火对准条件使用 APlayerCameraManager::GetCameraRotation (0x103b83608) 的真实镜头旋转，
+而不是仅使用刚写入的 ControlRotation。报告显示控制旋转已写但镜头差未缩小时，
+不会因字段写入成功就自动开火。该 getter 的 36 字节静态代码也存入 evidence/fire。
