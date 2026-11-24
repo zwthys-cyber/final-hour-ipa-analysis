@@ -19,6 +19,30 @@
       "name": "AController::GetPawn bounded prefix",
       "size": 64,
       "file": "103b7e114.bin"
+    },
+    {
+      "address": 4418052356,
+      "size": 680,
+      "name": "UFHCombatComponent::HandleFirePressed",
+      "file": "107562104.bin"
+    },
+    {
+      "address": 4418053036,
+      "size": 512,
+      "name": "UFHCombatComponent::HandleFireReleased bounded prefix",
+      "file": "1075623ac.bin"
+    },
+    {
+      "address": 4415910976,
+      "size": 192,
+      "name": "UFHCombatComponent class constructor bounded prefix",
+      "file": "107357440.bin"
+    },
+    {
+      "address": 4423700852,
+      "size": 80,
+      "name": "AFHHud::MinimapRangeCm",
+      "file": "107ac5174.bin"
     }
   ]
 }
