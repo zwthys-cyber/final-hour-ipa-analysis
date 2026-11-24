@@ -57,13 +57,18 @@ static uintptr_t LocateSettings() {
 }
 @end
 @interface FHRadarRoot : UIViewController
+@property(nonatomic,copy) void (^onLayout)(void);
 @end
 @implementation FHRadarRoot
+- (void)viewDidLayoutSubviews { [super viewDidLayoutSubviews];if(self.onLayout) self.onLayout(); }
 - (BOOL)prefersStatusBarHidden { return YES; }
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations { return UIInterfaceOrientationMaskLandscape; }
 @end
 @interface FHRadarController : NSObject
 @property(nonatomic,strong) FHRadarWindow *window;
+@property(nonatomic,strong) UIButton *bubble;
+@property(nonatomic,strong) UIView *panel;
+@property(nonatomic) CGPoint bubblePosition;
 @property(nonatomic,strong) UIButton *button;
 @property(nonatomic,strong) UIButton *headButton;
 @property(nonatomic,strong) UIButton *fireButton;
@@ -92,7 +97,7 @@ static uintptr_t LocateSettings() {
     if(state==10) reason=[NSString stringWithFormat:@"控制旋转已写 · 镜头差 %u°",radar::cameraErrorDegrees.load()];
     if(!attached) reason=@"等待进入支持的对局";
     else if(!frames || now-self.lastHeartbeatTime>=2) reason=@"HUD 回调未运行或已暂停";
-    self.report.text=[NSString stringWithFormat:@"FH 0.3 · %@\n回调 %llu · 敌 %u · 头 %u · 范围 %u · 可见 %u · 写视角 %llu",reason,
+    self.report.text=[NSString stringWithFormat:@"FH 0.4 · %@\n回调 %llu · 敌 %u · 头 %u · 范围 %u · 可见 %u · 写视角 %llu",reason,
         (unsigned long long)frames,radar::enemyCount.load(),radar::boneCount.load(),radar::angleCount.load(),
         radar::visibleCount.load(),(unsigned long long)radar::viewWrites.load()];
 }
@@ -114,17 +119,48 @@ static uintptr_t LocateSettings() {
     self.report.text=@"运行状态已复制，可粘贴反馈";
 }
 - (void)suspend { radar::fireEnabled.store(false);radar::headEnabled.store(false); }
-- (UIButton *)makeButton:(SEL)action label:(NSString *)label root:(UIView *)root column:(CGFloat)column row:(CGFloat)row {
+- (CGRect)overlayArea {
+    UIView *root=self.window.rootViewController.view;
+    CGRect safe=UIEdgeInsetsInsetRect(root.bounds,root.safeAreaInsets);
+    return CGRectInset(safe,8,8);
+}
+- (void)layoutOverlay {
+    if(!self.bubble || !self.panel) return;
+    CGRect area=[self overlayArea];
+    if(area.size.width<32 || area.size.height<32) return;
+    self.bubble.frame=CGRectMake(CGRectGetMinX(area)+self.bubblePosition.x*(area.size.width-32),
+        CGRectGetMinY(area)+self.bubblePosition.y*(area.size.height-32),32,32);
+    CGFloat width=std::min(CGFloat(280),area.size.width),height=std::min(CGFloat(310),area.size.height);
+    CGFloat x=CGRectGetMinX(self.bubble.frame)-width-8;
+    if(x<CGRectGetMinX(area)) x=CGRectGetMaxX(self.bubble.frame)+8;
+    x=std::max(CGRectGetMinX(area),std::min(CGRectGetMaxX(area)-width,x));
+    CGFloat y=std::max(CGRectGetMinY(area),std::min(CGRectGetMaxY(area)-height,self.bubble.center.y-height/2));
+    self.panel.frame=CGRectMake(x,y,width,height);
+}
+- (void)togglePanel {
+    self.panel.hidden=!self.panel.hidden;
+    self.bubble.alpha=self.panel.hidden?.55:.9;
+    self.bubble.accessibilityLabel=self.panel.hidden?@"展开 FH 设置，可拖动":@"收起 FH 设置，可拖动";
+    [self layoutOverlay];
+}
+- (void)dragBubble:(UIPanGestureRecognizer *)gesture {
+    UIView *root=self.window.rootViewController.view;
+    CGRect area=[self overlayArea];CGPoint delta=[gesture translationInView:root];
+    if(area.size.width<=32 || area.size.height<=32) return;
+    self.bubblePosition=CGPointMake(
+        std::max(CGFloat(0),std::min(CGFloat(1),self.bubblePosition.x+delta.x/(area.size.width-32))),
+        std::max(CGFloat(0),std::min(CGFloat(1),self.bubblePosition.y+delta.y/(area.size.height-32))));
+    [gesture setTranslation:CGPointZero inView:root];[self layoutOverlay];
+    if(gesture.state==UIGestureRecognizerStateEnded)
+        [NSUserDefaults.standardUserDefaults setObject:@{@"x":@(self.bubblePosition.x),@"y":@(self.bubblePosition.y)} forKey:@"FHAssist.overlayPosition.v1"];
+}
+- (UIButton *)makeButton:(SEL)action label:(NSString *)label root:(UIView *)root {
     UIButton *b=[UIButton buttonWithType:UIButtonTypeSystem];b.translatesAutoresizingMaskIntoConstraints=NO;
-    b.backgroundColor=[UIColor colorWithWhite:.08 alpha:.85];b.layer.cornerRadius=9;
+    b.backgroundColor=[UIColor colorWithWhite:.18 alpha:1];b.layer.cornerRadius=8;
     b.titleLabel.font=[UIFont systemFontOfSize:12 weight:UIFontWeightMedium];
     [b setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];b.accessibilityLabel=label;
     [b addTarget:self action:action forControlEvents:UIControlEventTouchUpInside];[root addSubview:b];
-    [NSLayoutConstraint activateConstraints:@[
-        [b.topAnchor constraintEqualToAnchor:root.safeAreaLayoutGuide.topAnchor constant:8+40*row],
-        [b.centerXAnchor constraintEqualToAnchor:root.centerXAnchor constant:column*94],
-        [b.widthAnchor constraintEqualToConstant:180],[b.heightAnchor constraintEqualToConstant:34]
-    ]];return b;
+    [b.heightAnchor constraintEqualToConstant:34].active=YES;return b;
 }
 - (void)install {
     if(self.window) return;
@@ -141,26 +177,61 @@ static uintptr_t LocateSettings() {
     self.window.backgroundColor=UIColor.clearColor;
     FHRadarRoot *root=[FHRadarRoot new];root.view.backgroundColor=UIColor.clearColor;
     self.window.rootViewController=root;
-    self.button=[self makeButton:@selector(toggle) label:@"小地图敌人持续显示" root:root.view column:-1 row:0];
-    self.headButton=[self makeButton:@selector(toggleHead) label:@"头部瞄准" root:root.view column:1 row:0];
-    self.zoomButton=[self makeButton:@selector(toggleZoom) label:@"缩小地图内容比例" root:root.view column:-1 row:1];
-    self.fireButton=[self makeButton:@selector(toggleFire) label:@"对准后自动开火" root:root.view column:1 row:1];
+    self.panel=[UIView new];self.panel.backgroundColor=[UIColor colorWithWhite:.06 alpha:.94];
+    self.panel.layer.cornerRadius=12;self.panel.clipsToBounds=YES;self.panel.hidden=YES;
+    [root.view addSubview:self.panel];
+    UIScrollView *scroll=[UIScrollView new];scroll.translatesAutoresizingMaskIntoConstraints=NO;
+    [self.panel addSubview:scroll];
+    self.button=[self makeButton:@selector(toggle) label:@"小地图敌人持续显示" root:scroll];
+    self.headButton=[self makeButton:@selector(toggleHead) label:@"头部瞄准" root:scroll];
+    self.zoomButton=[self makeButton:@selector(toggleZoom) label:@"缩小地图内容比例" root:scroll];
+    self.fireButton=[self makeButton:@selector(toggleFire) label:@"对准后自动开火" root:scroll];
+    UILabel *title=[UILabel new];title.text=@"FH 0.4";title.textColor=UIColor.whiteColor;
+    title.font=[UIFont systemFontOfSize:13 weight:UIFontWeightSemibold];
+    UIButton *close=[UIButton buttonWithType:UIButtonTypeSystem];[close setTitle:@"收起" forState:UIControlStateNormal];
+    [close addTarget:self action:@selector(togglePanel) forControlEvents:UIControlEventTouchUpInside];
+    UIStackView *header=[[UIStackView alloc] initWithArrangedSubviews:@[title,close]];
+    header.distribution=UIStackViewDistributionEqualSpacing;header.alignment=UIStackViewAlignmentCenter;
     self.report=[UILabel new];self.report.translatesAutoresizingMaskIntoConstraints=NO;
-    self.report.textColor=UIColor.whiteColor;self.report.backgroundColor=[UIColor colorWithWhite:.08 alpha:.8];
-    self.report.font=[UIFont systemFontOfSize:11];self.report.numberOfLines=2;self.report.textAlignment=NSTextAlignmentCenter;
+    self.report.textColor=UIColor.lightGrayColor;self.report.font=[UIFont systemFontOfSize:11];self.report.numberOfLines=0;
     self.report.userInteractionEnabled=YES;self.report.accessibilityLabel=@"运行状态，轻点复制诊断";
     [self.report addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(copyReport)]];
-    [root.view addSubview:self.report];
+    UIStackView *stack=[[UIStackView alloc] initWithArrangedSubviews:@[header,self.button,self.headButton,self.zoomButton,self.fireButton,self.report]];
+    stack.axis=UILayoutConstraintAxisVertical;stack.spacing=7;stack.translatesAutoresizingMaskIntoConstraints=NO;
+    [scroll addSubview:stack];
     [NSLayoutConstraint activateConstraints:@[
-        [self.report.topAnchor constraintEqualToAnchor:self.zoomButton.bottomAnchor constant:5],
-        [self.report.centerXAnchor constraintEqualToAnchor:root.view.centerXAnchor],
-        [self.report.widthAnchor constraintEqualToConstant:374],[self.report.heightAnchor constraintEqualToConstant:40]
+        [scroll.topAnchor constraintEqualToAnchor:self.panel.topAnchor],
+        [scroll.bottomAnchor constraintEqualToAnchor:self.panel.bottomAnchor],
+        [scroll.leadingAnchor constraintEqualToAnchor:self.panel.leadingAnchor],
+        [scroll.trailingAnchor constraintEqualToAnchor:self.panel.trailingAnchor],
+        [stack.topAnchor constraintEqualToAnchor:scroll.contentLayoutGuide.topAnchor constant:10],
+        [stack.bottomAnchor constraintEqualToAnchor:scroll.contentLayoutGuide.bottomAnchor constant:-10],
+        [stack.leadingAnchor constraintEqualToAnchor:scroll.contentLayoutGuide.leadingAnchor constant:10],
+        [stack.trailingAnchor constraintEqualToAnchor:scroll.contentLayoutGuide.trailingAnchor constant:-10],
+        [stack.widthAnchor constraintEqualToAnchor:scroll.frameLayoutGuide.widthAnchor constant:-20]
     ]];
+    self.bubblePosition=CGPointMake(1,.5);
+    id saved=[NSUserDefaults.standardUserDefaults objectForKey:@"FHAssist.overlayPosition.v1"];
+    if([saved isKindOfClass:NSDictionary.class] && [saved[@"x"] isKindOfClass:NSNumber.class] && [saved[@"y"] isKindOfClass:NSNumber.class]) {
+        double x=[saved[@"x"] doubleValue],y=[saved[@"y"] doubleValue];
+        if(std::isfinite(x) && std::isfinite(y)) self.bubblePosition=CGPointMake(std::clamp(x,0.0,1.0),std::clamp(y,0.0,1.0));
+    }
+    self.bubble=[UIButton buttonWithType:UIButtonTypeSystem];[self.bubble setTitle:@"FH" forState:UIControlStateNormal];
+    self.bubble.titleLabel.font=[UIFont systemFontOfSize:10 weight:UIFontWeightSemibold];
+    [self.bubble setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
+    self.bubble.backgroundColor=[UIColor colorWithWhite:.08 alpha:1];self.bubble.layer.cornerRadius=16;self.bubble.alpha=.55;
+    self.bubble.accessibilityLabel=@"展开 FH 设置，可拖动";
+    [self.bubble addTarget:self action:@selector(togglePanel) forControlEvents:UIControlEventTouchUpInside];
+    [self.bubble addGestureRecognizer:[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(dragBubble:)]];
+    [root.view addSubview:self.bubble];
+    __weak FHRadarController *weakSelf=self;
+    root.onLayout=^{ [weakSelf layoutOverlay]; };
+    [self layoutOverlay];
     for(UIButton *b in @[self.button,self.headButton,self.zoomButton,self.fireButton]) {
         b.enabled=supported;
         if(!supported) [b setTitle:@"版本不支持" forState:UIControlStateNormal];
     }
-    if(supported) [self refresh];else self.report.text=@"FH 0.3 · 游戏版本不支持，未启用";
+    if(supported) [self refresh];else self.report.text=@"FH 0.4 · 游戏版本不支持，未启用";
     self.window.hidden=NO;
     if(supported) {
         self.timer=[NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(refresh) userInfo:nil repeats:YES];
