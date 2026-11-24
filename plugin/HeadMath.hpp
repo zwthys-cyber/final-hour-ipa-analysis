@@ -15,6 +15,6 @@ inline bool solve(Vector eye,Vector head,Rotation current,Rotation &result,doubl
     result={std::atan2(z,horizontal)*degrees,std::atan2(y,x)*degrees,0};
     if(std::abs(result.pitch)>89) return false;
     error=std::hypot(wrap(result.pitch-current.pitch),wrap(result.yaw-current.yaw));
-    return error<=12;
+    return error<=60;
 }
 }

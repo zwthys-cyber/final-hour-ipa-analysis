@@ -66,26 +66,64 @@ static uintptr_t LocateSettings() {
 @property(nonatomic,strong) FHRadarWindow *window;
 @property(nonatomic,strong) UIButton *button;
 @property(nonatomic,strong) UIButton *headButton;
+@property(nonatomic,strong) UIButton *fireButton;
+@property(nonatomic,strong) UIButton *zoomButton;
+@property(nonatomic,strong) UILabel *report;
 @property(nonatomic,strong) NSTimer *timer;
+@property(nonatomic) uint64_t lastFrames;
+@property(nonatomic) NSTimeInterval lastHeartbeatTime;
 - (void)install;
 @end
 @implementation FHRadarController
 - (void)refresh {
-    BOOL on=radar::enabled.load();
-    BOOL head=radar::headEnabled.load();
-    BOOL attached=(on || head) && radar::attach();
-    NSString *title=on?(attached?@"地图敌人：开":@"地图敌人：等待对局"):@"地图敌人：关";
-    [self.button setTitle:title forState:UIControlStateNormal];
-    self.button.accessibilityValue=title;
-    NSString *headTitle=head?(attached?@"锁头：开":@"锁头：等待对局"):@"锁头：关";
-    [self.headButton setTitle:headTitle forState:UIControlStateNormal];
-    self.headButton.accessibilityValue=headTitle;
+    BOOL on=radar::enabled.load(),head=radar::headEnabled.load();
+    BOOL attached=(on || head || radar::zoomOut.load() || radar::fireOwned.load()) && radar::attach();
+    [self.button setTitle:on?(attached?@"地图敌人：开":@"地图：等待对局"):@"地图敌人：关" forState:UIControlStateNormal];
+    [self.headButton setTitle:head?(attached?@"锁头：搜敌中":@"锁头：等待对局"):@"锁头：关" forState:UIControlStateNormal];
+    [self.zoomButton setTitle:radar::zoomOut.load()?@"地图比例：缩小 2 倍":@"地图比例：原始" forState:UIControlStateNormal];
+    [self.fireButton setTitle:radar::fireEnabled.load()?(radar::fireOwned.load()?@"自动开火：输入中":@"自动开火：等待对准"):@"自动开火：关" forState:UIControlStateNormal];
+    uint64_t frames=radar::hudFrames.load();
+    NSTimeInterval now=NSDate.timeIntervalSinceReferenceDate;
+    if(frames!=self.lastFrames) self.lastHeartbeatTime=now;
+    self.lastFrames=frames;
+    NSString *states[] = {@"锁头未启用",@"正在检查角色",@"未获取到本地角色",@"未获取到有效镜头",@"本地角色未存活",@"骨骼类型初始化失败",@"没有存活敌人",@"敌人网格缺少 head 骨骼",@"目标超出角度或距离",@"目标未通过视线检查",@"已写入头部瞄准视角",@"视角写入核对失败",@"本地角色缺少开火组件"};
+    unsigned state=radar::headState.load();
+    NSString *reason=state<13?states[state]:@"等待检查";
+    if(!attached) reason=@"等待进入支持的对局";
+    else if(!frames || now-self.lastHeartbeatTime>=2) reason=@"HUD 回调未运行或已暂停";
+    self.report.text=[NSString stringWithFormat:@"FH 0.3 · %@\n回调 %llu · 敌 %u · 头 %u · 范围 %u · 可见 %u · 写视角 %llu",reason,
+        (unsigned long long)frames,radar::enemyCount.load(),radar::boneCount.load(),radar::angleCount.load(),
+        radar::visibleCount.load(),(unsigned long long)radar::viewWrites.load()];
 }
-- (void)toggle {
-    radar::enabled.store(!radar::enabled.load());[self refresh];
-}
+- (void)toggle { radar::enabled.store(!radar::enabled.load());[self refresh]; }
 - (void)toggleHead {
-    radar::headEnabled.store(!radar::headEnabled.load());[self refresh];
+    BOOL on=!radar::headEnabled.load();radar::headEnabled.store(on);
+    if(!on) radar::fireEnabled.store(false);
+    [self refresh];
+}
+- (void)toggleFire {
+    BOOL on=!radar::fireEnabled.load();
+    if(on) radar::headEnabled.store(true);
+    radar::fireEnabled.store(on);[self refresh];
+}
+- (void)toggleZoom { radar::zoomOut.store(!radar::zoomOut.load());[self refresh]; }
+- (void)copyReport {
+    UIPasteboard.generalPasteboard.string=[NSString stringWithFormat:@"%@\n地图 %d / 锁头 %d / 缩图 %d / 自动火 %d",self.report.text,
+        radar::enabled.load(),radar::headEnabled.load(),radar::zoomOut.load(),radar::fireEnabled.load()];
+    self.report.text=@"运行状态已复制，可粘贴反馈";
+}
+- (void)suspend { radar::fireEnabled.store(false);radar::headEnabled.store(false); }
+- (UIButton *)makeButton:(SEL)action label:(NSString *)label root:(UIView *)root column:(CGFloat)column row:(CGFloat)row {
+    UIButton *b=[UIButton buttonWithType:UIButtonTypeSystem];b.translatesAutoresizingMaskIntoConstraints=NO;
+    b.backgroundColor=[UIColor colorWithWhite:.08 alpha:.85];b.layer.cornerRadius=9;
+    b.titleLabel.font=[UIFont systemFontOfSize:12 weight:UIFontWeightMedium];
+    [b setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];b.accessibilityLabel=label;
+    [b addTarget:self action:action forControlEvents:UIControlEventTouchUpInside];[root addSubview:b];
+    [NSLayoutConstraint activateConstraints:@[
+        [b.topAnchor constraintEqualToAnchor:root.safeAreaLayoutGuide.topAnchor constant:8+40*row],
+        [b.centerXAnchor constraintEqualToAnchor:root.centerXAnchor constant:column*94],
+        [b.widthAnchor constraintEqualToConstant:180],[b.heightAnchor constraintEqualToConstant:34]
+    ]];return b;
 }
 - (void)install {
     if(self.window) return;
@@ -95,7 +133,6 @@ static uintptr_t LocateSettings() {
             scene=(UIWindowScene *)s;break;
         }
     if(!scene) return;
-    // Retain the existing exact UUID and code-prefix compatibility gate.
     BOOL supported=LocateSettings()!=0;
     if(supported) radar::base=reinterpret_cast<uintptr_t>(_dyld_get_image_header(0));
     self.window=[[FHRadarWindow alloc] initWithWindowScene:scene];
@@ -103,43 +140,31 @@ static uintptr_t LocateSettings() {
     self.window.backgroundColor=UIColor.clearColor;
     FHRadarRoot *root=[FHRadarRoot new];root.view.backgroundColor=UIColor.clearColor;
     self.window.rootViewController=root;
-    self.button=[UIButton buttonWithType:UIButtonTypeSystem];
-    self.button.translatesAutoresizingMaskIntoConstraints=NO;
-    self.button.backgroundColor=[UIColor colorWithWhite:.08 alpha:.85];self.button.layer.cornerRadius=10;
-    self.button.titleLabel.font=[UIFont systemFontOfSize:13 weight:UIFontWeightMedium];
-    [self.button setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
-    [self.button addTarget:self action:@selector(toggle) forControlEvents:UIControlEventTouchUpInside];
-    self.button.accessibilityLabel=@"切换小地图敌人持续显示";
-    [root.view addSubview:self.button];
+    self.button=[self makeButton:@selector(toggle) label:@"小地图敌人持续显示" root:root.view column:-1 row:0];
+    self.headButton=[self makeButton:@selector(toggleHead) label:@"头部瞄准" root:root.view column:1 row:0];
+    self.zoomButton=[self makeButton:@selector(toggleZoom) label:@"缩小地图内容比例" root:root.view column:-1 row:1];
+    self.fireButton=[self makeButton:@selector(toggleFire) label:@"对准后自动开火" root:root.view column:1 row:1];
+    self.report=[UILabel new];self.report.translatesAutoresizingMaskIntoConstraints=NO;
+    self.report.textColor=UIColor.whiteColor;self.report.backgroundColor=[UIColor colorWithWhite:.08 alpha:.8];
+    self.report.font=[UIFont systemFontOfSize:11];self.report.numberOfLines=2;self.report.textAlignment=NSTextAlignmentCenter;
+    self.report.userInteractionEnabled=YES;self.report.accessibilityLabel=@"运行状态，轻点复制诊断";
+    [self.report addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(copyReport)]];
+    [root.view addSubview:self.report];
     [NSLayoutConstraint activateConstraints:@[
-        [self.button.topAnchor constraintEqualToAnchor:root.view.safeAreaLayoutGuide.topAnchor constant:8],
-        [self.button.centerXAnchor constraintEqualToAnchor:root.view.centerXAnchor],
-        [self.button.widthAnchor constraintEqualToConstant:180],
-        [self.button.heightAnchor constraintEqualToConstant:36]
+        [self.report.topAnchor constraintEqualToAnchor:self.zoomButton.bottomAnchor constant:5],
+        [self.report.centerXAnchor constraintEqualToAnchor:root.view.centerXAnchor],
+        [self.report.widthAnchor constraintEqualToConstant:374],[self.report.heightAnchor constraintEqualToConstant:40]
     ]];
-    self.headButton=[UIButton buttonWithType:UIButtonTypeSystem];
-    self.headButton.translatesAutoresizingMaskIntoConstraints=NO;
-    self.headButton.backgroundColor=[UIColor colorWithWhite:.08 alpha:.85];self.headButton.layer.cornerRadius=10;
-    self.headButton.titleLabel.font=[UIFont systemFontOfSize:13 weight:UIFontWeightMedium];
-    [self.headButton setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
-    [self.headButton addTarget:self action:@selector(toggleHead) forControlEvents:UIControlEventTouchUpInside];
-    self.headButton.accessibilityLabel=@"切换可见敌人头部瞄准";
-    [root.view addSubview:self.headButton];
-    [NSLayoutConstraint activateConstraints:@[
-        [self.headButton.topAnchor constraintEqualToAnchor:self.button.bottomAnchor constant:6],
-        [self.headButton.centerXAnchor constraintEqualToAnchor:self.button.centerXAnchor],
-        [self.headButton.widthAnchor constraintEqualToAnchor:self.button.widthAnchor],
-        [self.headButton.heightAnchor constraintEqualToAnchor:self.button.heightAnchor]
-    ]];
-    self.headButton.enabled=supported;
-    if(!supported) [self.headButton setTitle:@"锁头：版本不支持" forState:UIControlStateNormal];
-    self.button.enabled=supported;
-    if(supported) [self refresh];
-    else [self.button setTitle:@"地图敌人：版本不支持" forState:UIControlStateNormal];
+    for(UIButton *b in @[self.button,self.headButton,self.zoomButton,self.fireButton]) {
+        b.enabled=supported;
+        if(!supported) [b setTitle:@"版本不支持" forState:UIControlStateNormal];
+    }
+    if(supported) [self refresh];else self.report.text=@"FH 0.3 · 游戏版本不支持，未启用";
     self.window.hidden=NO;
     if(supported) {
         self.timer=[NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(refresh) userInfo:nil repeats:YES];
         [[NSRunLoop mainRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(suspend) name:UIApplicationWillResignActiveNotification object:nil];
     }
 }
 @end

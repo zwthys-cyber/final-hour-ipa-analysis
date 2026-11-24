@@ -27,6 +27,10 @@ jobs:
         run: |
           clang++ -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined tests/HeadMathTests.cpp -o build/head-tests
           ./build/head-tests
+      - name: Test auto-fire acquisition and release policy on GitHub runner
+        run: |
+          clang++ -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined tests/FirePolicyTests.cpp -o build/fire-tests
+          ./build/fire-tests
       - name: Compile arm64 iOS dynamic library
         run: |
           SDK_PATH="$(xcrun --sdk iphoneos --show-sdk-path)"

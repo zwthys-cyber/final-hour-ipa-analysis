@@ -1,14 +1,15 @@
 # FINAL HOUR 0.2.10 — 静态分析与注入插件
 
-当前源码提供“小地图敌人持续显示”实验版：使用左上角原生地图，
-不要求敌人先开火。另有独立“锁头”开关，读取 head 骨骼，对准星附近、通过原生视线检查的存活敌人调整视角。
-两个开关默认关闭。本版已移除复杂跟瞄设置；旧版 v0.1.0 release 仍是跟瞄插件，
-不能当作新版雷达下载。尚未进行真机注入验证。
+当前源码为 FH 0.3 实验版：保留原生小地图常显，增加默认 2 倍地图距离范围、
+可复制的运行状态报告、扩大范围的头部搜敌，以及对准后自动开火开关。
+用户已反馈旧版地图有效但锁头没有感知到效果，本次修正仍需设备复验。
+地图常显、锁头、自动开火默认关，地图内容默认缩小；不调整人物移动速度。
+旧版 v0.1.0 release 是跟瞄插件，不能当作新版下载。
 
-- 新版构建产物：[GitHub Actions](https://github.com/zwthys-cyber/final-hour-ipa-analysis/actions/workflows/build-plugin.yml)，下载对应最新提交的 `FHAssist-0.2.10-arm64` artifact。
-- 使用说明：[plugin/INSTALL.zh-CN.md](plugin/INSTALL.zh-CN.md)。
-- 实现依据与限制：[plugin/MINIMAP_RESEARCH.zh-CN.md](plugin/MINIMAP_RESEARCH.zh-CN.md)。
-- 反汇编、参数测试、编译及签名检查全部在 GitHub runner 执行，当前服务器不编译或运行游戏/插件。
+- 新版构建：[GitHub Actions](https://github.com/zwthys-cyber/final-hour-ipa-analysis/actions/workflows/build-plugin.yml)，下载最新提交对应的 `FHAssist-0.2.10-arm64` artifact。
+- [使用与状态报告说明](plugin/INSTALL.zh-CN.md)。
+- [本次诊断、开火输入和地图缩放依据](plugin/AUTO_FIRE_RESEARCH.zh-CN.md)。
+- 所有反汇编、测试、编译及签名检查在 GitHub runner 执行；当前服务器不编译或运行游戏/插件。
 
 ## 结论
 

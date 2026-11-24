@@ -2,6 +2,7 @@
 #include <atomic>
 #include "RadarStamp.hpp"
 #include "HeadMath.hpp"
+#include "FirePolicy.hpp"
 #include <cmath>
 #include <cstdint>
 #include <cstring>
@@ -25,20 +26,24 @@ template<class T> static bool read(uintptr_t address,T &value) {
 }
 template<class T> static T function(uintptr_t offset) { return reinterpret_cast<T>(base+offset); }
 
+#include "AutoFire.hpp"
 #include "HeadAim.hpp"
+#include "MapZoom.hpp"
 
 static void draw(uintptr_t hud) {
     auto original=function<void(*)(uintptr_t)>(0x07a82154);
-    if(drawing || (!enabled.load(std::memory_order_relaxed) && !headEnabled.load(std::memory_order_relaxed))) { original(hud);return; }
+    if(drawing) { original(hud);return; }
+    hudFrames.fetch_add(1,std::memory_order_relaxed);
+    if(!enabled.load() && !headEnabled.load() && !fireOwned.load() && !zoomOut.load()) { original(hud);return; }
     drawing=true;
     // Executed by the game's virtual DrawHUD call, on the game's own drawing thread.
     uintptr_t world=function<uintptr_t(*)(uintptr_t)>(0x02e43cb0)(hud);
     double now=0;
     if(!read(world+0x9d0,now) || !std::isfinite(now) || now<0) {
-        original(hud);drawing=false;return;
+        nativeDraw(hud);fireGate.update(false,0,0);updateFire(0);drawing=false;return;
     }
     if(!enabled.load(std::memory_order_relaxed)) {
-        original(hud);lockHead(world);drawing=false;return;
+        nativeDraw(hud);lockHead(world);drawing=false;return;
     }
     Bodies bodies;
     function<void(*)(uintptr_t,Bodies *)>(0x07442a7c)(world,&bodies);
@@ -63,7 +68,7 @@ static void draw(uintptr_t hud) {
         }
     }
     // Native rendering retains its own alive/team/range/rotation/coordinate rules.
-    original(hud);
+    nativeDraw(hud);
     for(size_t i=0;i<count;++i) {
         if(!Readable(saved[i].address,sizeof(uint64_t),true)) continue;
         restoreStamp(reinterpret_cast<uint64_t *>(saved[i].address),stamp,saved[i].before);
