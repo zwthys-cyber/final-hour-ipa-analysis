@@ -1,4 +1,11 @@
-# FINAL HOUR 0.2.10 — IPA 静态分析
+# FINAL HOUR 0.2.10 — 静态分析与注入插件
+
+已增加 `FHAssist.dylib` 的源码与 GitHub Actions 构建流程。插件增强游戏已有的跟瞄，可调强度、距离和捕获范围；包含版本校验、悬浮菜单和关闭恢复。它不是独立锁头实现，尚未在真机注入测试。
+
+- 构建：GitHub → Actions → **Build iOS plugin** → 成功运行的产物。
+- 使用说明：[plugin/INSTALL.zh-CN.md](plugin/INSTALL.zh-CN.md)。
+- 实现依据：[plugin/RESEARCH.md](plugin/RESEARCH.md)。
+- 编译及参数测试全部在 GitHub runner 执行，当前服务器不编译或运行游戏/插件。
 
 ## 结论
 

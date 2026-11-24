@@ -1,0 +1,51 @@
+name: Build iOS plugin
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'plugin/**'
+      - 'tests/**'
+      - '.github/workflows/build-plugin.yml'
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test settings and restoration on GitHub runner
+        run: |
+          mkdir -p build
+          clang++ -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined tests/AimSettingsTests.cpp -o build/settings-tests
+          ./build/settings-tests
+      - name: Compile arm64 iOS dynamic library
+        run: |
+          SDK_PATH="$(xcrun --sdk iphoneos --show-sdk-path)"
+          xcrun --sdk iphoneos clang++ -std=c++17 -target arm64-apple-ios17.0 \
+            -isysroot "$SDK_PATH" -fobjc-arc -fvisibility=hidden \
+            -Wall -Wextra -Werror -O2 -dynamiclib \
+            -framework UIKit -framework Foundation \
+            -Wl,-install_name,@rpath/FHAssist.dylib \
+            plugin/FHAssist.mm -o build/FHAssist.dylib
+      - name: Ad hoc sign and inspect the dylib
+        run: |
+          codesign --force --sign - build/FHAssist.dylib
+          codesign --verify --strict --verbose=2 build/FHAssist.dylib
+          file build/FHAssist.dylib
+          xcrun lipo -archs build/FHAssist.dylib | grep -qx arm64
+          xcrun otool -L build/FHAssist.dylib
+          xcrun otool -l build/FHAssist.dylib > build/load-commands.txt
+          shasum -a 256 build/FHAssist.dylib > build/SHA256SUMS
+          cp plugin/INSTALL.zh-CN.md build/INSTALL.zh-CN.md
+          cd build
+          zip FHAssist-0.2.10-arm64.zip FHAssist.dylib INSTALL.zh-CN.md SHA256SUMS load-commands.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FHAssist-0.2.10-arm64
+          path: |
+            build/FHAssist.dylib
+            build/FHAssist-0.2.10-arm64.zip
+            build/SHA256SUMS
+            build/INSTALL.zh-CN.md
+          retention-days: 30
